@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
+import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { drizzle, type AnyD1Database } from "drizzle-orm/d1";
 import { todos } from "./schema";
-import { eq } from "drizzle-orm";
 
 type Bindings = {
   DB: AnyD1Database;
