@@ -46,6 +46,9 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
 
+      - name: Install wrangler
+        run: npm install -g wrangler@latest
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
