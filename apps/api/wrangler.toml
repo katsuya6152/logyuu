@@ -2,6 +2,8 @@ name = "logyuu-api"
 main = "dist/index.js"
 compatibility_date = "2024-01-01"
 
+[migrations]
+dir = "./drizzle/migrations"
 
 d1_databases = [
   { binding = "DB", database_name = "logyuu", database_id = "22305257-8592-4aee-83fc-be4077573b1c" }
