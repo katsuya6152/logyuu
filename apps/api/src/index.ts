@@ -16,7 +16,7 @@ app.use(
     origin: ["http://localhost:3000", "https://logyuu.pages.dev"],
     allowMethods: ["GET", "POST", "DELETE", "OPTIONS"],
     allowHeaders: ["Content-Type"],
-  })
+  }),
 );
 
 app.get("/", async (c) => {
