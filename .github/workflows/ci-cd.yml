@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install wrangler
+        run: pnpm add -g wrangler@latest
+
       - name: Lint/TypeCheck/Test
         run: |
           pnpm biome check .
