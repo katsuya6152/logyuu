@@ -1,7 +1,7 @@
-export default function CattlePage() {
+export default function CattleListPage() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">Cattle</div>
+      <div className="w-full max-w-sm">Cattle list page</div>
     </div>
   );
 }
