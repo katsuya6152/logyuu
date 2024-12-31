@@ -12,7 +12,7 @@ export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [title, setTitle] = useState("");
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
+  const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
 
   const fetchTodos = async () => {
     const res = await fetch(API_URL);

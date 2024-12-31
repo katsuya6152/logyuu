@@ -7,12 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --format=esm",
     "dev": "esbuild src/index.ts --bundle --outfile=dist/index.js --platform=browser --format=esm && wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "generate": "drizzle-kit generate",
+    "migrate:local": "wrangler d1 migrations apply logyuu --local",
+    "migrate": "wrangler d1 migrations apply logyuu --remote",
+    "create-dummy-data:local": "npx wrangler d1 execute logyuu --local --file=./db/dummy-data.sql",
+    "create-dummy-data": "wrangler d1 execute logyuu --remote --file=./db/dummy-data.sql"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "drizzle-kit": "^0.30.1",
     "drizzle-orm": "^0.38.3",
     "hono": "^4.6.14",
@@ -20,6 +26,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241224.0",
+    "@types/bcryptjs": "^2.4.6",
     "esbuild": "^0.24.2",
     "typescript": "^5",
     "wrangler": "^3.99.0"
