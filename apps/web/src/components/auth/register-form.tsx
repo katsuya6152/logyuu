@@ -12,45 +12,71 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export function RegisterForm({
+const registerSchema = z
+  .object({
+    email: z
+      .string()
+      .nonempty("メールアドレスを入力してください。")
+      .email("有効なメールアドレスを入力してください。"),
+    password: z
+      .string()
+      .nonempty("パスワードを入力してください。")
+      .min(6, "パスワードは6文字以上である必要があります。"),
+    confirmPassword: z
+      .string()
+      .nonempty("パスワード（確認）を入力してください。")
+      .min(6, "パスワードは6文字以上である必要があります。"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "パスワードが一致しません。",
+  });
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const RegisterForm = ({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: React.ComponentPropsWithoutRef<"div">) => {
   const router = useRouter();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
-
   const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
 
-  const handleRegister = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+  });
 
-    if (password !== confirmPassword) {
-      alert("パスワードが一致しません。");
-      return;
-    }
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const onSubmit = async (data: RegisterFormValues) => {
+    setErrorMessage(null);
     try {
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        alert(`登録成功: ${data.message}`);
+        alert("登録成功");
         router.push("/login");
       } else {
         const errorData = await response.json();
-        alert(`登録失敗: ${errorData.error}`);
+        setErrorMessage(
+          `エラーが発生しました: ${errorData.error || "不明なエラー"}`,
+        );
       }
     } catch (error) {
       console.error("登録エラー:", error);
-      alert("登録中にエラーが発生しました。");
+      setErrorMessage("通信エラーが発生しました。もう一度お試しください。");
     }
   };
 
@@ -64,7 +90,7 @@ export function RegisterForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">メールアドレス</Label>
@@ -72,31 +98,45 @@ export function RegisterForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email.message}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">パスワード</Label>
                 <Input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  placeholder="6文字以上のパスワード"
+                  {...register("password")}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="confirm-password">パスワード（確認）</Label>
+                <Label htmlFor="confirmPassword">パスワード（確認）</Label>
                 <Input
-                  id="confirm-password"
+                  id="confirmPassword"
                   type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
+                  placeholder="確認用のパスワードを入力"
+                  {...register("confirmPassword")}
                 />
+                {errors.confirmPassword && (
+                  <p className="text-red-500 text-xs">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
+              {errorMessage && (
+                <div className="text-red-500 text-xs text-center">
+                  {errorMessage}
+                </div>
+              )}
               <Button type="submit" className="w-full">
                 登録
               </Button>
@@ -115,4 +155,4 @@ export function RegisterForm({
       </Card>
     </div>
   );
-}
+};

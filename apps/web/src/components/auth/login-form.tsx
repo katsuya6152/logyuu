@@ -12,36 +12,67 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
-export function LoginForm({
+const loginSchema = z.object({
+  email: z
+    .string()
+    .nonempty("メールアドレスを入力してください。")
+    .email("有効なメールアドレスを入力してください。"),
+  password: z
+    .string()
+    .nonempty("パスワードを入力してください。")
+    .min(6, "パスワードは6文字以上である必要があります。"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const LoginForm = ({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: React.ComponentPropsWithoutRef<"div">) => {
   const router = useRouter();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
 
   const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
-    console.log(email, password);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  });
 
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    if (response.ok) {
-      const data = await response.json();
-      localStorage.setItem("token", data.jwt);
-      alert(`ログイン成功: ${data.message}`);
-      router.push("/");
-    } else {
-      const errorData = await response.json();
-      alert(`ログイン失敗: ${errorData.error}`);
+  const onSubmit = async (data: LoginFormValues) => {
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        localStorage.setItem("token", responseData.jwt);
+        router.push("/");
+      } else if (response.status === 401) {
+        setErrorMessage("メールアドレスまたはパスワードが正しくありません。");
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(
+          `エラーが発生しました: ${errorData.error || "不明なエラー"}`,
+        );
+      }
+    } catch (error) {
+      console.error("ログイン処理中にエラーが発生しました。", error);
+      setErrorMessage("通信エラーが発生しました。もう一度お試しください。");
     }
   };
 
@@ -55,7 +86,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">メールアドレス</Label>
@@ -63,17 +94,18 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs">{errors.email.message}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">パスワード</Label>
                   <a
                     href="/"
-                    className="text-gray-400 ml-auto inline-block text-xs underline-offset-4 underline"
+                    className="text-gray-400 ml-auto inline-block text-xs underline-offset-4 underline pointer-events-none"
                   >
                     パスワードをお忘れですか？
                   </a>
@@ -81,11 +113,20 @@ export function LoginForm({
                 <Input
                   id="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  placeholder="6文字以上のパスワード"
+                  {...register("password")}
                 />
+                {errors.password && (
+                  <p className="text-red-500 text-xs">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
+              {errorMessage && (
+                <div className="text-red-500 text-xs text-center">
+                  {errorMessage}
+                </div>
+              )}
               <Button type="submit" className="w-full">
                 ログイン
               </Button>
@@ -104,4 +145,4 @@ export function LoginForm({
       </Card>
     </div>
   );
-}
+};
