@@ -5,3 +5,9 @@ export const todos = sqliteTable("todos", {
   title: text("title").notNull(),
   completed: integer("completed").notNull().default(0),
 });
+
+export const users = sqliteTable("users", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  passwordHash: text("passwordHash").notNull(),
+});
