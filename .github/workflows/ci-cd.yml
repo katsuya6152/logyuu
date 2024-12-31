@@ -27,7 +27,7 @@ jobs:
 
       - name: Lint/TypeCheck/Test
         run: |
-          pnpm biome check .
+          pnpm format && pnpm lint
 
   # 2. デプロイ (CD) - mainブランチへのpush時のみ実行
   deploy:
