@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { client } from "@/lib/rpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -58,25 +59,20 @@ export const RegisterForm = ({
 
   const onSubmit = async (data: RegisterFormValues) => {
     setErrorMessage(null);
-    try {
-      const response = await fetch(`${API_URL}/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: data.email, password: data.password }),
-      });
 
-      if (response.ok) {
-        alert("登録成功");
-        router.push("/login");
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(
-          `エラーが発生しました: ${errorData.error || "不明なエラー"}`,
-        );
-      }
-    } catch (error) {
-      console.error("登録エラー:", error);
-      setErrorMessage("通信エラーが発生しました。もう一度お試しください。");
+    const res = await client.api.register.$post({
+      json: { email: data.email, password: data.password },
+    });
+
+    if (res.ok) {
+      alert("登録成功");
+      router.push("/login");
+    }
+    if (res.status === 400) {
+      const errorData = await res.json();
+      setErrorMessage(`エラーが発生しました: ${errorData.message}`);
+    } else {
+      setErrorMessage("エラーが発生しました: 不明なエラー");
     }
   };
 

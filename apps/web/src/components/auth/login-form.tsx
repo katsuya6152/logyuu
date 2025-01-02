@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { client } from "@/lib/rpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export const LoginForm = ({
 }: React.ComponentPropsWithoutRef<"div">) => {
   const router = useRouter();
 
-  const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
+  // const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
 
   const {
     register,
@@ -52,23 +53,18 @@ export const LoginForm = ({
     setErrorMessage(null);
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const res = await client.api.login.$post({
+        json: { email: data.email, password: data.password },
       });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        localStorage.setItem("token", responseData.jwt);
+      if (res.ok) {
+        const resData = await res.json();
+        localStorage.setItem("token", resData.jwt);
         router.push("/");
-      } else if (response.status === 401) {
+      } else if (res.status === 401) {
         setErrorMessage("メールアドレスまたはパスワードが正しくありません。");
       } else {
-        const errorData = await response.json();
-        setErrorMessage(
-          `エラーが発生しました: ${errorData.error || "不明なエラー"}`,
-        );
+        setErrorMessage("エラーが発生しました:不明なエラー");
       }
     } catch (error) {
       console.error("ログイン処理中にエラーが発生しました。", error);
