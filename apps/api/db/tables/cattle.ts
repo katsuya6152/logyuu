@@ -18,6 +18,10 @@ export const cattle = sqliteTable("cattle", {
   earTagNumber: text("earTagNumber"),
   // 名号
   name: text("name"),
+  // 成長段階
+  growthStage: text("growthStage", {
+    enum: ["仔牛", "育成牛", "肥育牛", "成牛"],
+  }),
   // 出生日
   birthday: text("birthday"),
   // 年齢
@@ -62,7 +66,7 @@ export const bloodline = sqliteTable("bloodline", {
     .references(() => cattle.cattleId)
     .notNull(),
   // 父
-  fatherCattleId: integer("fatherCattleId", { mode: "number" }),
+  fatherCattleName: text("fatherCattleName"),
   // 母の父
   motherFatherCattleName: text("motherFatherCattleName"),
   // 母の祖父

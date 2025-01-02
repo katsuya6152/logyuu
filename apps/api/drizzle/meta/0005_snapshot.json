@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "65c91efe-c40b-4690-942c-83201288c729",
+  "id": "bdc8e074-c340-45f1-9d49-91dc0a0cb335",
   "prevId": "72bdfec8-d299-4b82-bf81-00bdbe1b5293",
   "tables": {
     "todos": {
@@ -114,9 +114,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "fatherCattleId": {
-          "name": "fatherCattleId",
-          "type": "integer",
+        "fatherCattleName": {
+          "name": "fatherCattleName",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -192,6 +192,13 @@
         },
         "name": {
           "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "growthStage": {
+          "name": "growthStage",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

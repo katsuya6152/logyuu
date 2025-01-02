@@ -11,7 +11,7 @@ CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-brea
 CREATE TABLE `bloodline` (
 	`bloodlineId` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`cattleId` integer NOT NULL,
-	`fatherCattleId` integer,
+	`fatherCattleName` text,
 	`motherFatherCattleName` text,
 	`motherGrandFatherCattleName` text,
 	`motherGreatGrandFatherCattleName` text,
@@ -24,6 +24,7 @@ CREATE TABLE `cattle` (
 	`identificationNumber` integer NOT NULL,
 	`earTagNumber` text,
 	`name` text,
+	`growthStage` text,
 	`birthday` text,
 	`age` integer,
 	`monthsOld` integer,

@@ -4,7 +4,7 @@ import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { sign } from "hono/jwt";
-import { todos, users } from "../db/schema";
+import { bloodline, cattle, motherInfo, todos, users } from "../db/schema";
 
 type Bindings = {
   DB: AnyD1Database;
@@ -24,6 +24,10 @@ app.use(
 app.get("/healthcheck", async (c) => {
   return c.text("OK!");
 });
+
+// ------------------------------
+//  ユーザー関連 (user)
+// ------------------------------
 
 app.post("/register", async (c) => {
   const { email, password } = await c.req.json();
@@ -57,6 +61,25 @@ app.post("/login", async (c) => {
   } catch (error) {
     console.error(error);
     return c.json({ message: "Authentication failed." }, 500);
+  }
+});
+
+// ------------------------------
+//  個体 (Cattle) 関連
+// ------------------------------
+
+app.get("/cattle", async (c) => {
+  const db = drizzle(c.env.DB);
+  try {
+    const result = await db
+      .select()
+      .from(cattle)
+      .leftJoin(motherInfo, eq(cattle.cattleId, motherInfo.cattleId))
+      .leftJoin(bloodline, eq(cattle.cattleId, bloodline.cattleId));
+    return c.json(result);
+  } catch (error) {
+    console.error(error);
+    return c.json({ message: "Failed to get cattle list." }, 500);
   }
 });
 

@@ -11,8 +11,8 @@
     "generate": "drizzle-kit generate",
     "migrate:local": "wrangler d1 migrations apply logyuu --local",
     "migrate": "wrangler d1 migrations apply logyuu --remote",
-    "create-dummy-data:local": "npx wrangler d1 execute logyuu --local --file=./db/dummy-data.sql",
-    "create-dummy-data": "wrangler d1 execute logyuu --remote --file=./db/dummy-data.sql"
+    "create-dummy-data:local": "npx wrangler d1 execute logyuu --local --file=./db/dummy/dummy_data.sql",
+    "create-dummy-data": "wrangler d1 execute logyuu --remote --file=./db/dummy/dummy_data.sql"
   },
   "keywords": [],
   "author": "",
