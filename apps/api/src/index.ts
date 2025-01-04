@@ -5,7 +5,7 @@ import { Hono } from "hono";
 import { hc } from "hono/client";
 import { cors } from "hono/cors";
 import { sign } from "hono/jwt";
-import { bloodline, cattle, motherInfo, todos, users } from "../db/schema";
+import { bloodline, cattle, motherInfo, users } from "../db/schema";
 
 type Bindings = {
   DB: AnyD1Database;
@@ -84,29 +84,7 @@ const routes = app
       console.error(error);
       return c.json({ message: "Failed to get cattle list." }, 500);
     }
-  })
-
-  // -----初期テスト用のTodo API-----
-  .get("/", async (c) => {
-    const db = drizzle(c.env.DB);
-    const allTodos = await db.select().from(todos);
-    return c.json(allTodos);
-  })
-
-  .post("/add", async (c) => {
-    const { title } = await c.req.json();
-    const db = drizzle(c.env.DB);
-    await db.insert(todos).values({ title });
-    return c.json({ success: true });
-  })
-
-  .delete("/delete/:id", async (c) => {
-    const id = Number(c.req.param("id"));
-    const db = drizzle(c.env.DB);
-    await db.delete(todos).where(eq(todos.id, id));
-    return c.json({ success: true });
   });
-// -----初期テスト用のTodo API-----
 
 export type AppType = typeof routes;
 

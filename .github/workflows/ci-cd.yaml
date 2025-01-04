@@ -4,15 +4,16 @@ on:
   pull_request:
     branches: [main]
   push:
-    paths:
-      - "apps/web/**"
-      - "apps/api/**"
     branches: [main]
 
 jobs:
-  # 1. ビルド & テスト (CI)
+  # 1. Build & Test (CI)
   build-and-test:
     runs-on: ubuntu-latest
+    outputs:
+      api_changed: ${{ steps.filter.outputs.api }}
+      web_changed: ${{ steps.filter.outputs.web }}
+      migrations_changed: ${{ steps.filter.outputs.migrations }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -20,23 +21,40 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: '20'
+
+      # --- 変更ファイルのフィルタリング ---
+      - name: Filter changed paths
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            api:
+              - 'apps/api/**'
+            web:
+              - 'apps/web/**'
+            migrations:
+              - 'apps/api/drizzle/**'
 
       - name: Install pnpm
         run: npm install -g pnpm
-
+  
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Lint/TypeCheck/Test
+      - name: Lint / Test
         run: |
-          pnpm format && pnpm lint
+          pnpm format
+          pnpm lint
+        # pnpm test
 
   # 2. Workers (Hono API) のデプロイ
   deploy-api:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'apps/api/')
     runs-on: ubuntu-latest
     needs: build-and-test
+    if: >
+      github.event_name == 'push' &&
+      needs.build-and-test.outputs.api_changed == 'true'
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -44,16 +62,16 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install pnpm
         run: npm install -g pnpm
+  
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Install wrangler
         run: npm install -g wrangler@latest
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Build API
         working-directory: apps/api
@@ -68,12 +86,19 @@ jobs:
 
   # 3. D1マイグレーション
   apply-d1-migrations:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'apps/api/migrations/')
     runs-on: ubuntu-latest
     needs: build-and-test
+    if: >
+      github.event_name == 'push' &&
+      needs.build-and-test.outputs.migrations_changed == 'true'
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       - name: Install wrangler
         run: npm install -g wrangler@latest
@@ -87,9 +112,11 @@ jobs:
 
   # 4. Cloudflare Pages のデプロイ
   deploy-web:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'apps/web/')
     runs-on: ubuntu-latest
     needs: build-and-test
+    if: >
+      github.event_name == 'push' &&
+      needs.build-and-test.outputs.web_changed == 'true'
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -97,11 +124,11 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "20"
+          node-version: '20'
 
       - name: Install pnpm
         run: npm install -g pnpm
-
+  
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
