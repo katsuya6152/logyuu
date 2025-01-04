@@ -22,5 +22,8 @@
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm format && pnpm lint"
+  },
+  "volta": {
+    "node": "20.17.0"
   }
 }
