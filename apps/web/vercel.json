@@ -1,9 +1,6 @@
 {
   "build": {
-    "use": "@vercel/node",
-    "env": {
-      "NODE_VERSION": "20"
-    }
+    "use": "@vercel/node"
   },
   "installCommand": "pnpm install"
 }
