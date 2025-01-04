@@ -43,6 +43,13 @@
       "when": 1735812294757,
       "tag": "0005_serious_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1735998754579,
+      "tag": "0006_lively_reptil",
+      "breakpoints": true
     }
   ]
 }

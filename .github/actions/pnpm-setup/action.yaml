@@ -1,0 +1,19 @@
+name: PNPM Setup
+description: 'Set up Node.js and pnpm with caching'
+# author, branding 等は必要に応じて追加してください
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'pnpm'
+
+    - name: Install pnpm
+      run: npm install -g pnpm
+      shell: bash
+
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash
