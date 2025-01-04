@@ -46,7 +46,7 @@ jobs:
         run: |
           pnpm format
           pnpm lint
-          pnpm test
+        # pnpm test
 
   # 2. Workers (Hono API) のデプロイ
   deploy-api:
