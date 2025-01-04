@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "web": "pnpm -F web",
+    "api": "pnpm -F api",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "biome format .",
     "format:fix": "pnpm format --write .",
@@ -20,5 +22,8 @@
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm format && pnpm lint"
+  },
+  "volta": {
+    "node": "20.17.0"
   }
 }

@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
+import { hc } from "hono/client";
 import { cors } from "hono/cors";
 import { sign } from "hono/jwt";
 import { bloodline, cattle, motherInfo, todos, users } from "../db/schema";
@@ -12,97 +13,109 @@ type Bindings = {
 
 const app = new Hono<{ Bindings: Bindings }>().basePath("/api");
 
-app.use(
-  "*",
-  cors({
-    origin: ["http://localhost:3000", "https://logyuu.pages.dev"],
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type"],
-  }),
-);
+const routes = app
+  .use(
+    "*",
+    cors({
+      origin: ["http://localhost:3000", "https://logyuu.pages.dev"],
+      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type"],
+    }),
+  )
 
-app.get("/healthcheck", async (c) => {
-  return c.text("OK!");
-});
+  .get("/healthcheck", async (c) => {
+    return c.text("OK!");
+  })
 
-// ------------------------------
-//  ユーザー関連 (user)
-// ------------------------------
+  // ------------------------------
+  //  ユーザー関連 (user)
+  // ------------------------------
 
-app.post("/register", async (c) => {
-  const { email, password } = await c.req.json();
-  const passwordHash = await bcrypt.hash(password, 10);
+  .post("/register", async (c) => {
+    const { email, password } = await c.req.json();
+    const passwordHash = await bcrypt.hash(password, 10);
 
-  try {
     const db = drizzle(c.env.DB);
-    await db.insert(users).values({ email, passwordHash });
-    return c.json({ success: true }, 201);
-  } catch (error) {
-    console.error(error);
-    return c.json({ message: "Unable to register user." }, 400);
-  }
-});
-
-app.post("/login", async (c) => {
-  const { email, password } = await c.req.json();
-
-  try {
-    const db = drizzle(c.env.DB);
-    const user = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .limit(1);
-    if (user && (await bcrypt.compare(password, user[0].passwordHash))) {
-      const token = await sign({ id: user[0].id }, "secret");
-      return c.json({ jwt: token });
+    const result = await db.insert(users).values({ email, passwordHash });
+    if (!result.success) {
+      return c.json(
+        { success: false, message: "Unable to register user." },
+        400,
+      );
     }
-    return c.json({ message: "Invalid email or password." }, 401);
-  } catch (error) {
-    console.error(error);
-    return c.json({ message: "Authentication failed." }, 500);
-  }
-});
+    return c.json({ success: true }, 200);
+  })
 
-// ------------------------------
-//  個体 (Cattle) 関連
-// ------------------------------
+  .post("/login", async (c) => {
+    const { email, password } = await c.req.json();
 
-app.get("/cattle", async (c) => {
-  const db = drizzle(c.env.DB);
-  try {
-    const result = await db
-      .select()
-      .from(cattle)
-      .leftJoin(motherInfo, eq(cattle.cattleId, motherInfo.cattleId))
-      .leftJoin(bloodline, eq(cattle.cattleId, bloodline.cattleId));
-    return c.json(result);
-  } catch (error) {
-    console.error(error);
-    return c.json({ message: "Failed to get cattle list." }, 500);
-  }
-});
+    try {
+      const db = drizzle(c.env.DB);
+      const user = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
+      if (user && (await bcrypt.compare(password, user[0].passwordHash))) {
+        const token = await sign({ id: user[0].id }, "secret");
+        return c.json({ jwt: token });
+      }
+      return c.json({ message: "Invalid email or password." }, 401);
+    } catch (error) {
+      console.error(error);
+      return c.json({ message: "Authentication failed." }, 500);
+    }
+  })
 
+  // ------------------------------
+  //  個体 (Cattle) 関連
+  // ------------------------------
+
+  .get("/cattle", async (c) => {
+    const db = drizzle(c.env.DB);
+    try {
+      const result = await db
+        .select()
+        .from(cattle)
+        .leftJoin(motherInfo, eq(cattle.cattleId, motherInfo.cattleId))
+        .leftJoin(bloodline, eq(cattle.cattleId, bloodline.cattleId));
+      return c.json(result);
+    } catch (error) {
+      console.error(error);
+      return c.json({ message: "Failed to get cattle list." }, 500);
+    }
+  })
+
+  // -----初期テスト用のTodo API-----
+  .get("/", async (c) => {
+    const db = drizzle(c.env.DB);
+    const allTodos = await db.select().from(todos);
+    return c.json(allTodos);
+  })
+
+  .post("/add", async (c) => {
+    const { title } = await c.req.json();
+    const db = drizzle(c.env.DB);
+    await db.insert(todos).values({ title });
+    return c.json({ success: true });
+  })
+
+  .delete("/delete/:id", async (c) => {
+    const id = Number(c.req.param("id"));
+    const db = drizzle(c.env.DB);
+    await db.delete(todos).where(eq(todos.id, id));
+    return c.json({ success: true });
+  });
 // -----初期テスト用のTodo API-----
-app.get("/", async (c) => {
-  const db = drizzle(c.env.DB);
-  const allTodos = await db.select().from(todos);
-  return c.json(allTodos);
-});
 
-app.post("/add", async (c) => {
-  const { title } = await c.req.json();
-  const db = drizzle(c.env.DB);
-  await db.insert(todos).values({ title });
-  return c.json({ success: true });
-});
+export type AppType = typeof routes;
 
-app.delete("/delete/:id", async (c) => {
-  const id = Number(c.req.param("id"));
-  const db = drizzle(c.env.DB);
-  await db.delete(todos).where(eq(todos.id, id));
-  return c.json({ success: true });
-});
-// -----初期テスト用のTodo API-----
+type ClientType = typeof hc<AppType>;
+
+export const createClient = (
+  ...args: Parameters<ClientType>
+): ReturnType<ClientType> => {
+  return hc<AppType>(...args);
+};
 
 export default app;
