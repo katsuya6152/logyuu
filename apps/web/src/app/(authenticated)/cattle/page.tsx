@@ -8,7 +8,7 @@ export default function CattleListPage() {
     const res = await client.api.cattle.$get();
 
     const data = await res.json();
-    console.log(`data: ${data}`);
+    console.log(data);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies(fetchCattle): <explanation>
