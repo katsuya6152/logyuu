@@ -126,6 +126,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install wrangler
+        run: npm install -g wrangler@latest
+
       - name: Install pnpm
         run: npm install -g pnpm
   
