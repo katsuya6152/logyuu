@@ -18,6 +18,12 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
       # --- 変更ファイルのフィルタリング ---
       - name: Filter changed paths
         id: filter
@@ -31,9 +37,11 @@ jobs:
             migrations:
               - 'apps/api/drizzle/**'
 
-      # --- Node + pnpmセットアップ（composite actionの呼び出し） ---
-      - name: Setup environment with PNPM
-        uses: ./.github/actions/pnpm-setup
+      - name: Install pnpm
+        run: npm install -g pnpm
+  
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Lint / Test
         run: |
@@ -52,8 +60,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Setup environment with PNPM
-        uses: ./.github/actions/pnpm-setup
+      - name: Install pnpm
+        run: npm install -g pnpm
+  
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Install wrangler
         run: npm install -g wrangler@latest
@@ -101,8 +112,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Setup environment with PNPM
-        uses: ./.github/actions/pnpm-setup
+      - name: Install pnpm
+        run: npm install -g pnpm
+  
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Deploy to Cloudflare Pages
         working-directory: apps/web
