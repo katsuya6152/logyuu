@@ -132,6 +132,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build API
+        working-directory: apps/api
+        run: pnpm run build
+
       - name: Deploy to Cloudflare Pages
         working-directory: apps/web
         run: pnpm run deploy
