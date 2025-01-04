@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       # --- 変更ファイルのフィルタリング ---
       - name: Filter changed paths
@@ -60,6 +59,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Install pnpm
         run: npm install -g pnpm
   
@@ -91,6 +95,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Install wrangler
         run: npm install -g wrangler@latest
 
@@ -111,6 +120,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
       - name: Install pnpm
         run: npm install -g pnpm
