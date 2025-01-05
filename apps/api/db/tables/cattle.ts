@@ -20,7 +20,8 @@ export const cattle = sqliteTable("cattle", {
   name: text("name"),
   // 成長段階
   growthStage: text("growthStage", {
-    enum: ["仔牛", "育成牛", "肥育牛", "成牛"],
+    // enum: ["仔牛", "育成牛", "肥育牛", "成牛"],
+    enum: ["CALF", "GROWING", "FATTENING", "ADULT"],
   }),
   // 出生日
   birthday: text("birthday"),

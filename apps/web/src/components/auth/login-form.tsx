@@ -60,7 +60,7 @@ export const LoginForm = ({
       if (res.ok) {
         const resData = await res.json();
         localStorage.setItem("token", resData.jwt);
-        router.push("/");
+        router.push("/cattle");
       } else if (res.status === 401) {
         setErrorMessage("メールアドレスまたはパスワードが正しくありません。");
       } else {
