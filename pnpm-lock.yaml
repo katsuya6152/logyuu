@@ -96,9 +96,6 @@ importers:
       react-hook-form:
         specifier: ^7.54.2
         version: 7.54.2(react@19.0.0)
-      shared:
-        specifier: workspace:*
-        version: link:../../packages/shared
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -127,12 +124,6 @@ importers:
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.17
-      typescript:
-        specifier: ^5
-        version: 5.7.2
-
-  packages/shared:
-    devDependencies:
       typescript:
         specifier: ^5
         version: 5.7.2
