@@ -29,13 +29,13 @@ INSERT INTO cattle (
 )
 VALUES
 -- cattleId=1 (自動採番)
-(1, 1001, 'E-101', 'Taro',   '仔牛',   '2023-01-01', 1,   12,  30,  'Male',   70, 'Holstein', 'Good',      'Producer A', 'Barn A', 'BV-1001', 'Healthy male calf'),
+(1, 1001, '1234', 'たろう',   'CALF',   '2023-01-01', 1,   12,  30,  'メス',   70, '黒毛和種', '妊娠中',      '生産者A', '牛舎A', 'AAAAAA', '健康状態良好'),
 -- cattleId=2
-(1, 1002, 'E-102', 'Hanako', '成牛',   '2020-06-10', 3,   36,  100, 'Female', 85, 'Holstein', 'Fair',      'Producer A', 'Barn A', 'BV-1002', 'Has calved once'),
+(1, 1002, '5678', 'ハナコ', 'ADULT',   '2020-06-10', 3,   36,  100, 'オス', 85, '黒毛和種', '健康',      '生産者A', '牛舎A', 'BABCBB', '非常におとなしい性格で、健康良好'),
 -- cattleId=3
-(2, 2001, 'E-201', 'Jiro',   '肥育牛', '2022-07-20', 1,   14,  45,  'Male',   78, 'Jersey',   'Excellent', 'Producer B', 'Barn B', 'BV-2001', 'High growth potential'),
+(2, 2001, '9012', 'じろう',   'FATTENING', '2022-07-20', 1,   14,  45,  'オス',   78, '黒毛和種',   '健康', '生産者B', '牛舎B', 'BABCBB', '成長が早く、今後の期待大'),
 -- cattleId=4
-(2, 2002, 'E-202', 'Maruko', '育成牛', '2021-05-15', 2,   24,  70,  'Female', 90, 'Jersey',   'Good',      'Producer B', 'Barn B', 'BV-2002', 'Showing good progress');
+(2, 2002, '3456', 'マルコ', 'GROWING', '2021-05-15', 2,   24,  70,  'メス', 90, '黒毛和種',   '休息中',      '生産者B', '牛舎B', 'AAAAAA', '生産後の休息中。元気な状態を維持');
 
 
 
@@ -51,13 +51,13 @@ INSERT INTO bloodline (
 )
 VALUES
 -- 例: cattleId=1 (Taro) の血統
-(1, 'Father-X', 'HanaFather-X', 'HanaGrand-X', 'HanaGreatGrand-X'),
+(1, '茂忠', '幸茂', '茂晴花', '福忠'),
 -- 例: cattleId=2 (Hanako) の血統
-(2, 'Father', 'SpecialFather', 'SpecialGrandFather', 'SpecialGreatGrandFather'),
+(2, '安福久', '藤忠', '勝忠平', '茂晴花'),
 -- 例: cattleId=3 (Jiro) の血統
-(3, 'Father-X', 'UnknownMotherFather', 'UnknownMotherGrandFather', 'UnknownMotherGreatGrandFather'),
+(3, '茂福', '福忠', '安茂勝', '藤茂'),
 -- 例: cattleId=4 (Maruko) の血統
-(4, 'Father-X', 'None', 'None', 'None');
+(4, '茂晴花', '福茂', '忠富士', '安茂勝');
 
 
 
@@ -73,10 +73,10 @@ INSERT INTO mother_info (
 )
 VALUES
 -- 例: cattleId=1(Taro) の母情報 (母をHanako(cattleId=2)と想定)
-(1, 2, 'Hanako', '1002', 85),
+(1, 2, 'ハナコ', '1002', 85),
 -- 例: cattleId=2(Hanako) の母情報 (母をMaruko(cattleId=4)と想定)
-(2, 4, 'Maruko', '2002', 90),
+(2, 4, 'マルコ', '2002', 90),
 -- 例: cattleId=3(Jiro) の母情報 (仮に母がHanako=2)
-(3, 2, 'Hanako', '1002', 85),
+(3, 2, 'ハナコ', '1002', 85),
 -- 例: cattleId=4(Maruko) の母情報 (母をHanako=2, ただし実際は任意)
-(4, 2, 'Hanako', '1002', 85);
+(4, 2, 'ハナコ', '1002', 85);
