@@ -29,7 +29,7 @@ out/
 # ---- 環境変数ファイル ----
 .env
 .env.*       # ただし .env.example などのサンプルはコミット推奨
-!.env.local
+!.env.development
 
 # ---- Drizzle (マイグレーションは除外しない) ----
 # drizzle/ フォルダ内の *.sql はコミットするのが一般的
