@@ -17,7 +17,6 @@ export default function CattleListPage() {
     if (res.status === 200) {
       const data200 = await res.json();
       setData(data200);
-      console.log(`data: ${data200}`);
     }
     if (res.status === 500) {
       const data500 = await res.json();
@@ -39,7 +38,7 @@ export default function CattleListPage() {
   }, []);
 
   return (
-    <div className="flex h-full w-full items-center justify-center p-6 pb-0 md:p-10 pt-20">
+    <div className="flex h-full w-full items-center justify-center pt-20">
       <div className="w-full max-w-sm">
         {isMobile ? (
           <MobileListView data={data} />
