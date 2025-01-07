@@ -114,6 +114,7 @@ jobs:
   deploy-web:
     runs-on: ubuntu-latest
     needs: build-and-test
+    environment: production
     if: >
       github.event_name == 'push' &&
       needs.build-and-test.outputs.web_changed == 'true'

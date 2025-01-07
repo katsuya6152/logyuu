@@ -23,12 +23,12 @@ coverage/
 *.log
 
 # Vercel/Next.jsで生成される可能性のあるファイル
-.next-on-pages/  # next-on-pages でローカルビルド時に生成される場合
+.next-on-pages/
 out/
 
 # ---- 環境変数ファイル ----
 .env
-.env.*       # ただし .env.example などのサンプルはコミット推奨
+.env.*
 !.env.development
 
 # ---- Drizzle (マイグレーションは除外しない) ----
