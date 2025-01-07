@@ -14,4 +14,6 @@ const myFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   return Response.json(jsonData);
 };
 
-export const client = createClient("http://localhost:8787");
+export const client = createClient(
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8787",
+);
