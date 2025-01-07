@@ -17,7 +17,6 @@ export default function CattleListPage() {
     if (res.status === 200) {
       const data200 = await res.json();
       setData(data200);
-      console.log(`data: ${data200}`);
     }
     if (res.status === 500) {
       const data500 = await res.json();

@@ -1,5 +1,14 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,6 +24,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { CattleGetResType } from "@/types/cattle";
+import { zodResolver } from "@hookform/resolvers/zod";
 import classNames from "classnames";
 import {
   ArrowDown01,
@@ -26,10 +36,43 @@ import {
   Search,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface MobileListViewProps {
   data?: CattleGetResType;
 }
+
+const items = [
+  {
+    id: "CALF",
+    label: "仔牛",
+  },
+  {
+    id: "GROWING",
+    label: "育成牛",
+  },
+  {
+    id: "FATTENING",
+    label: "肥育牛",
+  },
+  {
+    id: "ADULT",
+    label: "成牛",
+  },
+  {
+    id: "male",
+    label: "オス",
+  },
+  {
+    id: "female",
+    label: "メス",
+  },
+] as const;
+
+const FormSchema = z.object({
+  items: z.array(z.string()),
+});
 
 export default function MobileListView(props: MobileListViewProps) {
   const router = useRouter();
@@ -51,6 +94,17 @@ export default function MobileListView(props: MobileListViewProps) {
 
   const handleItemClick = (cattleId: number) => {
     router.push(`/cattle/${cattleId}`);
+  };
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      items: [],
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log("submit:", data);
   };
 
   return (
@@ -136,12 +190,63 @@ export default function MobileListView(props: MobileListViewProps) {
                 絞り込みたい項目を選択してください
               </SheetDescription>
             </SheetHeader>
-            <div className="py-4">Content</div>
-            <SheetFooter>
-              <SheetClose asChild>
-                <Button type="submit">絞り込む</Button>
-              </SheetClose>
-            </SheetFooter>
+            <div className="py-4">
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <FormField
+                    control={form.control}
+                    name="items"
+                    render={() => (
+                      <FormItem>
+                        {items.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="items"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={item.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(item.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([
+                                              ...field.value,
+                                              item.id,
+                                            ])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== item.id,
+                                              ),
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    {item.label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <SheetClose asChild>
+                    <Button type="submit">絞り込む</Button>
+                  </SheetClose>
+                </form>
+              </Form>
+            </div>
           </SheetContent>
         </Sheet>
       </div>
