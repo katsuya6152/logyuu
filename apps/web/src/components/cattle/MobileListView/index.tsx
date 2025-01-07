@@ -1,10 +1,30 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import type { CattleGetResType } from "@/types/cattle";
 import classNames from "classnames";
-import { ArrowDownUp, ChevronRight, Filter, Plus, Search } from "lucide-react";
+import {
+  ArrowDown01,
+  ArrowDown10,
+  ArrowDownUp,
+  ChevronRight,
+  Filter,
+  Plus,
+  Search,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface MobileListViewProps {
@@ -44,18 +64,86 @@ export default function MobileListView(props: MobileListViewProps) {
         />
       </div>
 
-      {/* <Separator /> */}
-
       <div className="flex items-center w-full h-5 my-4">
-        <Button variant="ghost" className="w-full">
-          <ArrowDownUp />
-          並び替え
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" className="w-full">
+              <ArrowDownUp />
+              並び替え
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>並び替え</SheetTitle>
+              <SheetDescription className="text-left">
+                並び替えたい項目と順序を選択してください
+              </SheetDescription>
+            </SheetHeader>
+
+            <div className="flex flex-col gap-4 pt-4 pb-12">
+              <RadioGroup defaultValue="option-0">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-0" id="option-0" />
+                  <Label htmlFor="option-0">全て表示</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-1" id="option-1" />
+                  <Label htmlFor="option-1">名前</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-2" id="option-2" />
+                  <Label htmlFor="option-2">ID</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="option-3" id="option-3" />
+                  <Label htmlFor="option-3">日齢</Label>
+                </div>
+              </RadioGroup>
+
+              <div className="flex justify-center w-full gap-2">
+                <Button variant="outline">
+                  <ArrowDown01 />
+                  昇順
+                </Button>
+                <Button variant="outline">
+                  <ArrowDown10 />
+                  降順
+                </Button>
+              </div>
+            </div>
+
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">並び替える</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+
         <Separator orientation="vertical" />
-        <Button variant="ghost" className="w-full">
-          <Filter />
-          絞り込み
-        </Button>
+
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" className="w-full">
+              <Filter />
+              絞り込み
+            </Button>
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>絞り込み</SheetTitle>
+              <SheetDescription className="text-left">
+                絞り込みたい項目を選択してください
+              </SheetDescription>
+            </SheetHeader>
+            <div className="py-4">Content</div>
+            <SheetFooter>
+              <SheetClose asChild>
+                <Button type="submit">絞り込む</Button>
+              </SheetClose>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </div>
 
       <Separator />
