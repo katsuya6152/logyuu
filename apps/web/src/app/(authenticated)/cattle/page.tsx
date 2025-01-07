@@ -39,7 +39,7 @@ export default function CattleListPage() {
   }, []);
 
   return (
-    <div className="flex h-full w-full items-center justify-center p-6 pb-0 md:p-10 pt-20">
+    <div className="flex h-full w-full items-center justify-center pt-20">
       <div className="w-full max-w-sm">
         {isMobile ? (
           <MobileListView data={data} />
