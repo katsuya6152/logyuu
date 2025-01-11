@@ -11,20 +11,48 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Bell, HelpCircle, LogOut, Menu, Search, User, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  HelpCircle,
+  LogOut,
+  Menu,
+  Search,
+  User,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const isCattleNewPage = pathname === "/cattle/new";
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleBackClick = () => {
+    router.back(); // 前のページに戻る
+  };
+
+  console.log(pathname);
 
   return (
     <header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 z-10">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-end h-16">
-          {/* ロゴ */}
-          <div className="flex-shrink-0">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex">
+            {isCattleNewPage && (
+              <Button
+                onClick={handleBackClick}
+                variant="ghost"
+                className="p-0 mr-4"
+              >
+                <ArrowLeft />
+              </Button>
+            )}
+
             <Link href="/">
               <Image
                 src="/logyuu.png"
@@ -32,7 +60,6 @@ export function Header() {
                 height={120}
                 alt="logo"
                 priority
-                className="absolute top-4 left-4"
               />
             </Link>
           </div>

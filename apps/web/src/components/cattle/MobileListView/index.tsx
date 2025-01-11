@@ -107,6 +107,10 @@ export default function MobileListView(props: MobileListViewProps) {
     console.log("submit:", data);
   };
 
+  const handleAdd = () => {
+    router.push("/cattle/new");
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="relative flex w-full">
@@ -310,6 +314,7 @@ export default function MobileListView(props: MobileListViewProps) {
         className="absolute right-4 bottom-4"
         variant="secondary"
         size="icon"
+        onClick={handleAdd}
       >
         <Plus />
       </Button>
