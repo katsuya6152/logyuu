@@ -36,7 +36,9 @@ export default function CattleDetailPage() {
     <div className="pt-20">
       <h1>詳細ページ</h1>
       <p>選択された Cattle ID: {params.id}</p>
-      <Button onClick={handleDelete}>削除</Button>
+      <Button variant="destructive" onClick={handleDelete}>
+        削除
+      </Button>
     </div>
   );
 }
