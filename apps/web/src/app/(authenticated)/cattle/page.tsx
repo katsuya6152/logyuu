@@ -12,7 +12,7 @@ export default function CattleListPage() {
   const [data, setData] = useState<CattleGetResType>();
 
   const fetchCattle = async () => {
-    const res = await client.api.cattle.$get();
+    const res = await client.api.cattle.$get({ credentials: "include" });
 
     if (res.status === 200) {
       const data200 = await res.json();

@@ -10,15 +10,15 @@ export const cattle = sqliteTable("cattle", {
   ownerUserId: integer("ownerUserId", { mode: "number" })
     .references(() => users.id)
     .notNull(),
-  // 個体識別番号
+  // 個体識別番号*
   identificationNumber: integer("identificationNumber", {
     mode: "number",
   }).notNull(),
   // 耳標番号
   earTagNumber: text("earTagNumber"),
-  // 名号
+  // 名号*
   name: text("name"),
-  // 成長段階
+  // 成長段階*
   growthStage: text("growthStage", {
     // enum: ["仔牛", "育成牛", "肥育牛", "成牛"],
     enum: ["CALF", "GROWING", "FATTENING", "ADULT"],
@@ -31,7 +31,7 @@ export const cattle = sqliteTable("cattle", {
   monthsOld: integer("monthsOld", { mode: "number" }),
   // 日齢
   daysOld: integer("daysOld", { mode: "number" }),
-  // 性別
+  // 性別*
   gender: text("gender"),
   // 得点
   score: integer("score", { mode: "number" }),
