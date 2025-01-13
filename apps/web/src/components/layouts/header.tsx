@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { client } from "@/lib/rpc";
 import {
   ArrowLeft,
   Bell,
@@ -33,10 +34,15 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleBackClick = () => {
-    router.back(); // 前のページに戻る
+    router.back();
   };
 
-  console.log(pathname);
+  const handleLogout = async () => {
+    const res = await client.api.logout.$get();
+    if (res.ok) {
+      router.push("login");
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 z-10">
@@ -233,6 +239,7 @@ export function Header() {
                 variant="ghost"
                 size="sm"
                 className="justify-start text-gray-700 hover:text-primary dark:text-gray-300 dark:hover:text-primary-light"
+                onClick={handleLogout}
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 ログアウト

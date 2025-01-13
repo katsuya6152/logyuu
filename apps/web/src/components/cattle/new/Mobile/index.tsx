@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { client } from "@/lib/rpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -69,15 +70,31 @@ export default function MobileNewCattle() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    // ここで実際のAPI呼び出しを行います
-    console.log(data);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // API呼び出しの模擬
-    setIsSubmitting(false);
-    toast({
-      title: "登録完了",
-      description: "牛の個体情報が正常に登録されました。",
-    });
-    router.push("/cattle");
+    try {
+      const token = localStorage.getItem("jwt");
+
+      const res = await client.api.cattle.$post({
+        json: data,
+        credentials: "include",
+        authorizetion: `Bearer ${token}`,
+      });
+
+      if (res.ok) {
+        setIsSubmitting(false);
+        toast({
+          title: "登録完了",
+          description: "牛の個体情報が正常に登録されました。",
+        });
+        router.push("/cattle");
+      }
+    } catch (err) {
+      console.error(err);
+      setIsSubmitting(false);
+      toast({
+        title: "登録失敗",
+        description: "牛の個体情報を登録できませんでした。再度お試しください。",
+      });
+    }
   };
 
   return (
@@ -229,8 +246,8 @@ export default function MobileNewCattle() {
                 <SelectValue placeholder="性別を選択" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="male">オス</SelectItem>
-                <SelectItem value="female">メス</SelectItem>
+                <SelectItem value="オス">オス</SelectItem>
+                <SelectItem value="メス">メス</SelectItem>
               </SelectContent>
             </Select>
           )}

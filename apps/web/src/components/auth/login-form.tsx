@@ -37,8 +37,6 @@ export const LoginForm = ({
 }: React.ComponentPropsWithoutRef<"div">) => {
   const router = useRouter();
 
-  // const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api` || "";
-
   const {
     register,
     handleSubmit,
