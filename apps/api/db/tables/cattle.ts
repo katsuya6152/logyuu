@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { type InferSelectModel, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 
@@ -15,7 +15,7 @@ export const cattle = sqliteTable("cattle", {
     mode: "number",
   }).notNull(),
   // 耳標番号
-  earTagNumber: text("earTagNumber"),
+  earTagNumber: integer("earTagNumber", { mode: "number" }),
   // 名号*
   name: text("name"),
   // 成長段階*

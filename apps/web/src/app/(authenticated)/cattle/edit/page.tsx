@@ -1,10 +1,10 @@
 "use client";
 
-import DesktopNewCattle from "@/components/cattle/new/Desktop";
-import MobileNewCattle from "@/components/cattle/new/Mobile";
+import DesktopEditCattle from "@/components/cattle/edit/Desktop";
+import MobileEditCattle from "@/components/cattle/edit/Mobile";
 import { useEffect, useState } from "react";
 
-export default function CattleNewPage() {
+export default function CattleEditPage() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function CattleNewPage() {
 
   return (
     <div className="pt-20">
-      {isMobile ? <MobileNewCattle /> : <DesktopNewCattle />}
+      {isMobile ? <MobileEditCattle /> : <DesktopEditCattle />}
     </div>
   );
 }
