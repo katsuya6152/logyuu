@@ -233,7 +233,101 @@ const routes = app
         500,
       );
     }
+  })
+
+  .get("/cattle/:cattleId", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    if (!cattleId) {
+      return c.json({ success: false, message: "cattleId is required." }, 400);
+    }
+
+    try {
+      const result = await db
+        .select()
+        .from(cattle)
+        .leftJoin(motherInfo, eq(cattle.cattleId, motherInfo.cattleId))
+        .leftJoin(bloodline, eq(cattle.cattleId, bloodline.cattleId))
+        .where(eq(cattle.cattleId, Number(cattleId)));
+
+      if (result.length === 0) {
+        return c.json({ success: false, message: "Cattle not found." }, 404);
+      }
+
+      return c.json({ success: true, data: result[0] }, 200);
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to retrieve cattle details." },
+        500,
+      );
+    }
+  })
+
+  .put("/cattle/:cattleId", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    try {
+      if (!cattleId) {
+        return c.json(
+          { success: false, message: "cattleId is required." },
+          400,
+        );
+      }
+
+      const body = await c.req.json();
+      if (!body.name || !body.growthStage || !body.gender) {
+        return c.json(
+          { success: false, message: "Missing required fields." },
+          400,
+        );
+      }
+
+      const updateResult = await db
+        .update(cattle)
+        .set({
+          identificationNumber: body.identificationNumber ?? null,
+          earTagNumber: body.earTagNumber ?? null,
+          name: body.name,
+          growthStage: body.growthStage,
+          birthday: body.birthday ?? null,
+          age: body.age ?? null,
+          monthsOld: body.monthsOld ?? null,
+          daysOld: body.daysOld ?? null,
+          gender: body.gender,
+          score: body.score ?? null,
+          breed: body.breed ?? null,
+          healthStatus: body.healthStatus ?? null,
+          producerName: body.producerName ?? null,
+          barn: body.barn ?? null,
+          breedingValue: body.breedingValue ?? null,
+          notes: body.notes ?? null,
+        })
+        .where(eq(cattle.cattleId, Number(cattleId)))
+        .run();
+
+      if (updateResult.affectedRows === 0) {
+        return c.json(
+          { success: false, message: "Cattle not found or not updated." },
+          404,
+        );
+      }
+
+      return c.json(
+        { success: true, message: "Cattle data updated successfully." },
+        200,
+      );
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to update cattle data." },
+        500,
+      );
+    }
   });
+
 export type AppType = typeof routes;
 
 type ClientType = typeof hc<AppType>;

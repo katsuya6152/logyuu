@@ -30,7 +30,7 @@ import { useState } from "react";
 export function Header() {
   const router = useRouter();
   const pathname = usePathname();
-  const isCattleNewPage = pathname === "/cattle/new";
+  const isCattlePage = pathname.includes("/cattle/");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleBackClick = () => {
@@ -49,7 +49,7 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex">
-            {isCattleNewPage && (
+            {isCattlePage && (
               <Button
                 onClick={handleBackClick}
                 variant="ghost"

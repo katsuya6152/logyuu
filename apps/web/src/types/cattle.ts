@@ -5,3 +5,8 @@ export type CattleGetResType = InferResponseType<
   typeof client.api.cattle.$get,
   200
 >;
+
+export type CattleDetailGetResType = InferResponseType<
+  (typeof client.api.cattle)[":cattleId"]["$get"],
+  200
+>;
