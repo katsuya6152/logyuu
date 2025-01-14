@@ -23,6 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { getGrowthStage } from "@/lib/utils";
 import type { CattleGetResType } from "@/types/cattle";
 import { zodResolver } from "@hookform/resolvers/zod";
 import classNames from "classnames";
@@ -76,21 +77,6 @@ const FormSchema = z.object({
 
 export default function MobileListView(props: MobileListViewProps) {
   const router = useRouter();
-
-  const getGrowthStage = (
-    growthStage: "CALF" | "GROWING" | "FATTENING" | "ADULT" | null,
-  ) => {
-    switch (growthStage) {
-      case "CALF":
-        return "仔牛";
-      case "GROWING":
-        return "育成牛";
-      case "FATTENING":
-        return "肥育牛";
-      case "ADULT":
-        return "成牛";
-    }
-  };
 
   const handleItemClick = (cattleId: number) => {
     router.push(`/cattle/${cattleId}`);

@@ -54,19 +54,19 @@ export default function MobileEditCattle() {
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      identificationNumber: cattleData.identificationNumber,
-      earTagNumber: cattleData.earTagNumber ?? undefined,
-      name: cattleData.name ?? undefined,
-      growthStage: cattleData.growthStage ?? undefined,
-      birthday: cattleData.birthday ?? undefined,
-      gender: cattleData.gender ?? undefined,
-      score: cattleData.score ?? undefined,
-      breed: cattleData.breed ?? undefined,
-      healthStatus: cattleData.healthStatus ?? undefined,
-      producerName: cattleData.producerName ?? undefined,
-      barn: cattleData.barn ?? undefined,
-      breedingValue: cattleData.breedingValue ?? undefined,
-      notes: cattleData.notes ?? undefined,
+      identificationNumber: cattleData.cattle.identificationNumber,
+      earTagNumber: cattleData.cattle.earTagNumber ?? undefined,
+      name: cattleData.cattle.name ?? undefined,
+      growthStage: cattleData.cattle.growthStage ?? undefined,
+      birthday: cattleData.cattle.birthday ?? undefined,
+      gender: cattleData.cattle.gender ?? undefined,
+      score: cattleData.cattle.score ?? undefined,
+      breed: cattleData.cattle.breed ?? undefined,
+      healthStatus: cattleData.cattle.healthStatus ?? undefined,
+      producerName: cattleData.cattle.producerName ?? undefined,
+      barn: cattleData.cattle.barn ?? undefined,
+      breedingValue: cattleData.cattle.breedingValue ?? undefined,
+      notes: cattleData.cattle.notes ?? undefined,
     },
   });
 
@@ -76,7 +76,7 @@ export default function MobileEditCattle() {
       const token = localStorage.getItem("jwt");
 
       const res = await client.api.cattle[":cattleId"].$put({
-        param: { cattleId: String(cattleData.cattleId) },
+        param: { cattleId: String(cattleData.cattle.cattleId) },
         json: data,
       } as unknown as { param: { cattleId: string }; json: FormData });
 
