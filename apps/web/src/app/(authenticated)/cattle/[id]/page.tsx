@@ -1,6 +1,8 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Drawer,
   DrawerClose,
@@ -13,7 +15,9 @@ import {
 } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 import { client } from "@/lib/rpc";
+import { extractDatePart, getGrowthStage } from "@/lib/utils";
 import useCattleStore from "@/store/cattle-store";
+import classNames from "classnames";
 import { Edit, Trash2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -40,7 +44,7 @@ export default function CattleDetailPage() {
 
       if (res.status === 200) {
         const data200 = await res.json();
-        updateState(data200.data.cattle);
+        updateState(data200.data);
       }
     } catch (error) {
       console.error("Failed to fetch cattle details:", error);
@@ -66,7 +70,7 @@ export default function CattleDetailPage() {
     if (res.ok) {
       toast({
         title: "削除完了",
-        description: `${cattleData.name}の個体情報が正常に削除されました。`,
+        description: `${cattleData.cattle.name}の個体情報が正常に削除されました。`,
       });
       router.push("/cattle");
     }
@@ -80,11 +84,33 @@ export default function CattleDetailPage() {
   }, [params.id]);
 
   return (
-    <div className="p-8 pt-20">
+    <div className="p-4 pt-20">
       {cattleData ? (
-        <div className="mt-4">
-          <div className="flex justify-between font-black">
-            <div>{cattleData.name}</div>
+        <div className="mt-4 flex flex-col gap-4">
+          <div className="flex justify-between">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <p className="font-black mr-2">{cattleData.cattle.name}</p>
+                <Badge variant="outline">
+                  <span
+                    className={classNames("font-semibold", {
+                      "text-blue-500": cattleData.cattle.gender === "オス",
+                      "text-red-500": cattleData.cattle.gender === "メス",
+                    })}
+                  >
+                    {cattleData.cattle.gender}
+                  </span>
+                </Badge>
+                <Badge>{getGrowthStage(cattleData.cattle.growthStage)}</Badge>
+                <Badge variant="outline">
+                  {cattleData.cattle.healthStatus}
+                </Badge>
+              </div>
+              <p className="text-xs">
+                耳標番号：{cattleData.cattle.earTagNumber}
+              </p>
+            </div>
+
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
@@ -108,9 +134,9 @@ export default function CattleDetailPage() {
                     </DrawerTitle>
                     <DrawerDescription>
                       個体識別番号:
-                      {cattleData.identificationNumber}
+                      {cattleData.cattle.identificationNumber}
                       <br />
-                      名号: {cattleData.name}
+                      名号: {cattleData.cattle.name}
                     </DrawerDescription>
                   </DrawerHeader>
                   <DrawerFooter>
@@ -130,24 +156,117 @@ export default function CattleDetailPage() {
             </div>
           </div>
 
-          <h2 className="font-bold">詳細情報</h2>
-          <p>名前: {cattleData.name}</p>
-          <p>成長段階: {cattleData.growthStage}</p>
-          <p>性別: {cattleData.gender}</p>
-          <p>得点: {cattleData.score ?? "N/A"}</p>
-          <p>品種: {cattleData.breed ?? "N/A"}</p>
-          <p>健康状態: {cattleData.healthStatus ?? "N/A"}</p>
-          {/* <h3 className="mt-2 font-bold">血統情報</h3>
-          <p>父: {cattleData.fatherCattleName ?? "N/A"}</p>
-          <p>
-            母の父:
-            {cattleData.motherFatherCattleName ?? "N/A"}
-          </p>
-          <h3 className="mt-2 font-bold">母情報</h3>
-          <p>母の名前: {cattleData.motherName ?? "N/A"}</p>
-          <p>
-            母の得点: {cattleData..mother_info?.motherScore ?? "N/A"}
-          </p> */}
+          <Card>
+            <CardHeader className="p-4">
+              <CardTitle>基本情報</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-2 pt-0 flex flex-col gap-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">個体識別番号: </span>
+                <span>{cattleData.cattle.identificationNumber}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">出生日: </span>
+                <span>{cattleData.cattle.birthday}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">年齢/月齢/:日齢 </span>
+                <span>
+                  {cattleData.cattle.age}歳/{cattleData.cattle.monthsOld}ヶ月/
+                  {cattleData.cattle.daysOld}日
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">得点: </span>
+                <span>{cattleData.cattle.score ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">品種: </span>
+                <span>{cattleData.cattle.breed ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">生産者: </span>
+                <span>{cattleData.cattle.producerName ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">牛舎: </span>
+                <span>{cattleData.cattle.barn ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">育種価: </span>
+                <span>{cattleData.cattle.breedingValue ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">備考: </span>
+                <span>{cattleData.cattle.notes}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="p-4">
+              <CardTitle>血統情報</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-2 pt-0 flex flex-col gap-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">父: </span>
+                <span>{cattleData.bloodline?.fatherCattleName ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の父:</span>
+                <span>
+                  {cattleData.bloodline?.motherFatherCattleName ?? "-"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の祖父:</span>
+                <span>
+                  {cattleData.bloodline?.motherGrandFatherCattleName ?? "-"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の祖祖父:</span>
+                <span>
+                  {cattleData.bloodline?.motherGreatGrandFatherCattleName ??
+                    "-"}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="p-4">
+              <CardTitle>母情報</CardTitle>
+            </CardHeader>
+            <CardContent className="px-4 pb-2 pt-0 flex flex-col gap-1">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の名前: </span>
+                <span>{cattleData.mother_info?.motherName ?? "-"}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の個体識別番号:</span>
+                <span>
+                  {cattleData.mother_info?.motherIdentificationNumber ?? "-"}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-500">母の得点:</span>
+                <span>{cattleData.mother_info?.motherScore ?? "-"}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-center gap-2 text-xs text-gray-500">
+            <p>
+              登録日時:
+              {extractDatePart(cattleData.cattle.createdAt, "localString")}
+            </p>
+            /
+            <p>
+              更新日時:
+              {extractDatePart(cattleData.cattle.updatedAt, "localString")}
+            </p>
+          </div>
         </div>
       ) : (
         <p>読み込み中...</p>
