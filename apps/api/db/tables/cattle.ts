@@ -1,4 +1,4 @@
-import { type InferSelectModel, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { users } from "./users";
 
@@ -60,7 +60,9 @@ export const cattle = sqliteTable("cattle", {
     .default(sql`(unixepoch() * 1000)`),
 });
 
-// 血統情報
+/**
+ * 血統情報
+ */
 export const bloodline = sqliteTable("bloodline", {
   bloodlineId: integer("bloodlineId", { mode: "number" }).primaryKey({
     autoIncrement: true,
@@ -79,7 +81,9 @@ export const bloodline = sqliteTable("bloodline", {
   motherGreatGrandFatherCattleName: text("motherGreatGrandFatherCattleName"),
 });
 
-// 母情報
+/**
+ * 母情報
+ */
 export const motherInfo = sqliteTable("mother_info", {
   motherInfoId: integer("motherInfoId", { mode: "number" }).primaryKey({
     autoIncrement: true,
@@ -96,4 +100,82 @@ export const motherInfo = sqliteTable("mother_info", {
   motherIdentificationNumber: text("motherIdentificationNumber"),
   // 母の得点
   motherScore: integer("motherScore", { mode: "number" }),
+});
+
+/**
+ * 現在の繁殖状態
+ */
+export const breedingStatus = sqliteTable("breeding_status", {
+  breedingStatusId: integer("breedingStatusId", { mode: "number" }).primaryKey({
+    autoIncrement: true,
+  }),
+  // 紐づけ対象の個体
+  cattleId: integer("cattleId", { mode: "number" })
+    .references(() => cattle.cattleId)
+    .notNull(),
+  // 産次
+  parity: integer("parity", { mode: "number" }),
+  // 分娩予定日
+  expectedCalvingDate: text("expectedCalvingDate"),
+  // 妊娠鑑定予定日
+  scheduledPregnancyCheckDate: text("scheduledPregnancyCheckDate"),
+  // 分娩後経過日数
+  daysAfterCalving: integer("daysAfterCalving", { mode: "number" }),
+  // 空胎日数
+  daysOpen: integer("daysOpen", { mode: "number" }),
+  // 妊娠日数
+  pregnancyDays: integer("pregnancyDays", { mode: "number" }),
+  // 受精後日数
+  daysAfterInsemination: integer("daysAfterInsemination", { mode: "number" }),
+  // 種付回数（現在のサイクル内での試行回数）
+  inseminationCount: integer("inseminationCount", { mode: "number" }),
+  // 繁殖に関するメモ
+  breedingMemo: text("breedingMemo"),
+  // 前回の出産が安産か難産か（0=安産 / 1=難産などで管理）
+  isDifficultBirth: integer("isDifficultBirth", { mode: "boolean" }),
+
+  // 登録日時・更新日時
+  createdAt: integer("createdAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
+});
+
+/**
+ * 繁殖の累計・統計情報
+ */
+export const breedingSummary = sqliteTable("breeding_summary", {
+  breedingSummaryId: integer("breedingSummaryId", {
+    mode: "number",
+  }).primaryKey({
+    autoIncrement: true,
+  }),
+  // 紐づけ対象の個体
+  cattleId: integer("cattleId", { mode: "number" })
+    .references(() => cattle.cattleId)
+    .notNull(),
+  // 累計種付回数
+  totalInseminationCount: integer("totalInseminationCount", { mode: "number" }),
+  // 平均空胎日数
+  averageDaysOpen: integer("averageDaysOpen", { mode: "number" }),
+  // 平均妊娠期間
+  averagePregnancyPeriod: integer("averagePregnancyPeriod", { mode: "number" }),
+  // 平均分娩間隔
+  averageCalvingInterval: integer("averageCalvingInterval", { mode: "number" }),
+  // 難産回数
+  difficultBirthCount: integer("difficultBirthCount", { mode: "number" }),
+  // 受胎頭数
+  pregnancyHeadCount: integer("pregnancyHeadCount", { mode: "number" }),
+  // 受胎率 (累計に対する受胎成功率)
+  pregnancySuccessRate: integer("pregnancySuccessRate", { mode: "number" }),
+
+  // 登録日時・更新日時
+  createdAt: integer("createdAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
 });

@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { getGrowthStage } from "@/lib/utils";
 import type { CattleDetailGetResType } from "@/types/cattle";
 import classNames from "classnames";
 import { Edit, Trash2 } from "lucide-react";
@@ -43,7 +44,7 @@ export function CattleDetailHeader({
               {cattleData.cattle.gender}
             </span>
           </Badge>
-          <Badge>{cattleData.cattle.growthStage}</Badge>
+          <Badge>{getGrowthStage(cattleData.cattle.growthStage)}</Badge>
           <Badge variant="outline">{cattleData.cattle.healthStatus}</Badge>
         </div>
         <p className="text-xs">耳標番号：{cattleData.cattle.earTagNumber}</p>

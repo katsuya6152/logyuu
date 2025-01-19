@@ -8,10 +8,14 @@ import { History } from "@/components/cattle/detail/History";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { client } from "@/lib/rpc";
-import { extractDatePart, getGrowthStage } from "@/lib/utils";
+import { extractDatePart } from "@/lib/utils";
 import useCattleStore from "@/store/cattle-store";
+import type {
+  BreedingStatusGetResType,
+  BreedingSummaryGetResType,
+} from "@/types/cattle";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const runtime = "edge";
 
@@ -20,6 +24,10 @@ export default function CattleDetailPage() {
   const params = useParams<{ id: string }>();
   const { toast } = useToast();
   const { cattleData, updateState } = useCattleStore();
+  const [breedingStatus, setBreedingStatus] =
+    useState<BreedingStatusGetResType>();
+  const [breedingSummary, setBreedingSummary] =
+    useState<BreedingSummaryGetResType>();
 
   const fetchCattleDetails = async () => {
     try {
@@ -67,10 +75,58 @@ export default function CattleDetailPage() {
     }
   };
 
+  const fetchBreedingStatus = async () => {
+    try {
+      const res = await client.api.cattle[":cattleId"].breeding_status.$get({
+        param: { cattleId: params.id },
+      });
+
+      if (res.status === 404) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      if (res.status === 200) {
+        const data200 = await res.json();
+        setBreedingStatus(data200);
+      }
+    } catch (error) {
+      console.error("Failed to fetch cattle details:", error);
+      alert("データの取得に失敗しました。");
+    }
+  };
+
+  const fetchBreedingSummary = async () => {
+    try {
+      const res = await client.api.cattle[":cattleId"].breeding_summary.$get({
+        param: { cattleId: params.id },
+      });
+
+      if (res.status === 404) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      if (res.status === 200) {
+        const data200 = await res.json();
+        setBreedingSummary(data200);
+      }
+    } catch (error) {
+      console.error("Failed to fetch cattle details:", error);
+      alert("データの取得に失敗しました。");
+    }
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies(fetchCattleDetails): <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies(fetchBreedingStatus): <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies(fetchBreedingSummary): <explanation>
   useEffect(() => {
     if (params.id) {
       fetchCattleDetails();
+      fetchBreedingStatus();
+      fetchBreedingSummary();
     }
   }, [params.id]);
 
@@ -99,7 +155,10 @@ export default function CattleDetailPage() {
               <Bloodline cattleData={cattleData} />
             </TabsContent>
             <TabsContent value="breeding">
-              <Breeding cattleData={cattleData} />
+              <Breeding
+                statusData={breedingStatus?.data}
+                summaryData={breedingSummary?.data}
+              />
             </TabsContent>
             <TabsContent value="history">
               <History cattleData={cattleData} />
