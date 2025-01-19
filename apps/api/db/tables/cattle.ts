@@ -19,6 +19,7 @@ export const cattle = sqliteTable("cattle", {
   // 名号*
   name: text("name"),
   // 成長段階*
+  // TODO: 初産牛、経産牛を追加（成牛を外す）
   growthStage: text("growthStage", {
     // enum: ["仔牛", "育成牛", "肥育牛", "成牛"],
     enum: ["CALF", "GROWING", "FATTENING", "ADULT"],
@@ -33,6 +34,8 @@ export const cattle = sqliteTable("cattle", {
   daysOld: integer("daysOld", { mode: "number" }),
   // 性別*
   gender: text("gender"),
+  // TODO: 体重追加
+
   // 得点
   score: integer("score", { mode: "number" }),
   // 品種
