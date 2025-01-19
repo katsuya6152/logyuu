@@ -23,7 +23,7 @@ export function Breeding({
           <CardContent className="px-4 pb-2 pt-0 flex flex-col gap-1">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">産次:</span>
-              <span>{statusData.parity ?? "-"}</span>
+              <span>{statusData.parity ?? "-"}産</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">分娩予定日:</span>
@@ -35,23 +35,23 @@ export function Breeding({
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">分娩後経過日数:</span>
-              <span>{statusData.daysAfterCalving ?? "-"}</span>
+              <span>{statusData.daysAfterCalving ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">空胎日数:</span>
-              <span>{statusData.daysOpen ?? "-"}</span>
+              <span>{statusData.daysOpen ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">妊娠日数:</span>
-              <span>{statusData.pregnancyDays ?? "-"}</span>
+              <span>{statusData.pregnancyDays ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">受精後日数:</span>
-              <span>{statusData.daysAfterInsemination ?? "-"}</span>
+              <span>{statusData.daysAfterInsemination ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">種付回数:</span>
-              <span>{statusData.inseminationCount ?? "-"}</span>
+              <span>{statusData.inseminationCount ?? "-"}回</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">前回の出産:</span>
@@ -81,31 +81,31 @@ export function Breeding({
           <CardContent className="px-4 pb-2 pt-0 flex flex-col gap-1">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">累計種付回数:</span>
-              <span>{summaryData.totalInseminationCount ?? "-"}</span>
+              <span>{summaryData.totalInseminationCount ?? "-"}回</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">平均空胎日数:</span>
-              <span>{summaryData.averageDaysOpen ?? "-"}</span>
+              <span>{summaryData.averageDaysOpen ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">平均妊娠期間:</span>
-              <span>{summaryData.averagePregnancyPeriod ?? "-"}</span>
+              <span>{summaryData.averagePregnancyPeriod ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">平均分娩間隔:</span>
-              <span>{summaryData.averageCalvingInterval ?? "-"}</span>
+              <span>{summaryData.averageCalvingInterval ?? "-"}日</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">難産回数:</span>
-              <span>{summaryData.difficultBirthCount ?? "-"}</span>
+              <span>{summaryData.difficultBirthCount ?? "-"}回</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">受胎頭数:</span>
-              <span>{summaryData.pregnancyHeadCount ?? "-"}</span>
+              <span>{summaryData.pregnancyHeadCount ?? "-"}頭</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-500">受胎率:</span>
-              <span>{summaryData.pregnancySuccessRate ?? "-"}</span>
+              <span>{summaryData.pregnancySuccessRate ?? "-"}％</span>
             </div>
           </CardContent>
         </Card>
