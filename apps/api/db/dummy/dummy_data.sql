@@ -80,3 +80,53 @@ VALUES
 (3, 2, 'ハナコ', '1002', 85),
 -- 例: cattleId=4(Maruko) の母情報 (母をHanako=2, ただし実際は任意)
 (4, 2, 'ハナコ', '1002', 85);
+
+-- =============================
+-- 4) breeding_status テーブルのダミーデータ
+-- =============================
+INSERT INTO breeding_status (
+  cattleId,
+  parity,
+  expectedCalvingDate,
+  scheduledPregnancyCheckDate,
+  daysAfterCalving,
+  daysOpen,
+  pregnancyDays,
+  daysAfterInsemination,
+  inseminationCount,
+  breedingMemo,
+  isDifficultBirth
+)
+VALUES
+-- cattleId=1 (たろう)
+(1, 1, '2023-12-01', '2023-10-15', 30, 20, 50, 10, 2, '初産で順調', 0),
+-- cattleId=2 (ハナコ)
+(2, 2, '2024-01-15', '2023-11-30', 25, 15, 40, 5, 1, '順調に成長中', 0),
+-- cattleId=3 (じろう)
+(3, 1, '2023-11-20', '2023-10-05', 10, 5, 70, 20, 1, '妊娠期間長め', 1),
+-- cattleId=4 (マルコ)
+(4, 1, NULL, NULL, 0, 0, 0, 0, 0, 'まだ繁殖サイクルに入っていない', 0);
+
+
+-- =============================
+-- 5) breeding_summary テーブルのダミーデータ
+-- =============================
+INSERT INTO breeding_summary (
+  cattleId,
+  totalInseminationCount,
+  averageDaysOpen,
+  averagePregnancyPeriod,
+  averageCalvingInterval,
+  difficultBirthCount,
+  pregnancyHeadCount,
+  pregnancySuccessRate
+)
+VALUES
+-- cattleId=1 (たろう)
+(1, 2, 25, 280, 360, 0, 1, 90),
+-- cattleId=2 (ハナコ)
+(2, 3, 30, 290, 370, 1, 1, 95),
+-- cattleId=3 (じろう)
+(3, 1, 20, 270, 365, 0, 2, 80),
+-- cattleId=4 (マルコ)
+(4, 0,  0,  0,   0,   0, 0, 0);

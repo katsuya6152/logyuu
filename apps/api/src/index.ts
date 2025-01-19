@@ -6,7 +6,14 @@ import { hc } from "hono/client";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { sign } from "hono/jwt";
-import { bloodline, cattle, motherInfo, users } from "../db/schema";
+import {
+  bloodline,
+  breedingStatus,
+  breedingSummary,
+  cattle,
+  motherInfo,
+  users,
+} from "../db/schema";
 
 type Bindings = {
   DB: AnyD1Database;
@@ -323,6 +330,68 @@ const routes = app
       console.error(error);
       return c.json(
         { success: false, message: "Failed to update cattle data." },
+        500,
+      );
+    }
+  })
+
+  .get("/cattle/:cattleId/breeding_status", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    if (!cattleId) {
+      return c.json({ success: false, message: "cattleId is required." }, 400);
+    }
+
+    try {
+      const result = await db
+        .select()
+        .from(breedingStatus)
+        .where(eq(breedingStatus.cattleId, Number(cattleId)));
+
+      if (result.length === 0) {
+        return c.json(
+          { success: false, message: "Breeding status not found." },
+          404,
+        );
+      }
+
+      return c.json({ success: true, data: result[0] }, 200);
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to retrieve breeding status." },
+        500,
+      );
+    }
+  })
+
+  .get("/cattle/:cattleId/breeding_summary", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    if (!cattleId) {
+      return c.json({ success: false, message: "cattleId is required." }, 400);
+    }
+
+    try {
+      const result = await db
+        .select()
+        .from(breedingSummary)
+        .where(eq(breedingSummary.cattleId, Number(cattleId)));
+
+      if (result.length === 0) {
+        return c.json(
+          { success: false, message: "Breeding summary not found." },
+          404,
+        );
+      }
+
+      return c.json({ success: true, data: result[0] }, 200);
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to retrieve breeding summary." },
         500,
       );
     }
