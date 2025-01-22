@@ -20,3 +20,8 @@ export type BreedingSummaryGetResType = InferResponseType<
   (typeof client.api.cattle)[":cattleId"]["breeding_summary"]["$get"],
   200
 >;
+
+export type EventsGetResType = InferResponseType<
+  (typeof client.api.cattle)[":cattleId"]["events"]["$get"],
+  200
+>;

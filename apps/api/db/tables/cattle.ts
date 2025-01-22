@@ -179,3 +179,37 @@ export const breedingSummary = sqliteTable("breeding_summary", {
     .notNull()
     .default(sql`(unixepoch() * 1000)`),
 });
+
+/**
+ * イベント情報
+ */
+export const events = sqliteTable("events", {
+  eventId: integer("eventId", { mode: "number" }).primaryKey({
+    autoIncrement: true,
+  }),
+  cattleId: integer("cattleId", { mode: "number" })
+    .references(() => cattle.cattleId)
+    .notNull(),
+  eventType: text("eventType", {
+    enum: [
+      "ESTRUS", // 発情
+      "INSEMINATION", // 受精（人工授精）
+      "CALVING", // 分娩
+      "VACCINATION", // ワクチン接種
+      "SHIPMENT", // 出荷
+      "HOOF_TRIMMING", // 削蹄
+      "OTHER", // その他
+    ],
+  }).notNull(),
+  // イベントが起こった日時
+  eventDatetime: integer("eventDatetime", { mode: "timestamp_ms" }).notNull(),
+  // イベントに関する自由メモ
+  notes: text("notes"),
+  // 登録日時・更新日時
+  createdAt: integer("createdAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`),
+});

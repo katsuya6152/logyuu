@@ -1,6 +1,31 @@
+-- =============================
+-- 0) テーブルデータのリセット
+-- =============================
+-- 各テーブルのデータ削除
+DELETE FROM events;
+DELETE FROM breeding_summary;
+DELETE FROM breeding_status;
+DELETE FROM mother_info;
+DELETE FROM bloodline;
+DELETE FROM cattle;
+DELETE FROM users;
+
+-- 自動増分IDのリセット (sqlite_sequence)
+DELETE FROM sqlite_sequence WHERE name = 'events';
+DELETE FROM sqlite_sequence WHERE name = 'breeding_summary';
+DELETE FROM sqlite_sequence WHERE name = 'breeding_status';
+DELETE FROM sqlite_sequence WHERE name = 'mother_info';
+DELETE FROM sqlite_sequence WHERE name = 'bloodline';
+DELETE FROM sqlite_sequence WHERE name = 'cattle';
+DELETE FROM sqlite_sequence WHERE name = 'users';
+
+-- =============================
+-- 以下、ダミーデータ挿入スクリプト
+-- =============================
+
 INSERT INTO users (email, passwordHash)
 VALUES
-  ('alice@example.com', '$2a$10$abcdefghijklmnopqrstuv'),
+  ('test@test.co.jp', '$2a$10$3L5VA0dU9n13/ZHOO.ak.uXmJI1YkyvfLV45OwnJl99DJCznEvdsa'),
   ('bob@example.com',   '$2a$10$uvwxyz0123456789ABCDE'), 
   ('charlie@example.com', '$2a$10$ABCD1234EFGH5678IJKL'),
   ('david@example.com', '$2a$10$MNOPQRSTUVWX01234567');
@@ -130,3 +155,30 @@ VALUES
 (3, 1, 20, 270, 365, 0, 2, 80),
 -- cattleId=4 (マルコ)
 (4, 0,  0,  0,   0,   0, 0, 0);
+
+
+-- =============================
+-- 6) events テーブルのダミーデータ
+-- =============================
+INSERT INTO events (
+  cattleId,
+  eventType,
+  eventDatetime,
+  notes
+)
+VALUES
+-- cattleId=1
+(1, 'ESTRUS',        1690156800000, '7月24日に発情を確認'),
+(1, 'INSEMINATION',  1692576000000, '8月21日に人工授精'),
+
+-- cattleId=2
+(2, 'CALVING',       1688083200000, '6月30日に分娩が無事完了'),
+(2, 'VACCINATION',   1692835200000, '8月24日にワクチン接種'),
+
+-- cattleId=3
+(3, 'SHIPMENT',      1703808000000, '12月29日に出荷予定'),
+(3, 'HOOF_TRIMMING', 1692835200000, '8月24日に定期削蹄'),
+
+-- cattleId=4
+(4, 'ESTRUS',        1689379200000, '7月15日に発情兆候を確認'),
+(4, 'OTHER',         1690156800000, '初期導入時メモ');

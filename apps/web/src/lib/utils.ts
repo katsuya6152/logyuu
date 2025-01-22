@@ -56,3 +56,27 @@ export const extractDatePart = (
       throw new Error("Invalid part specified");
   }
 };
+
+// TODO: BE側と共通化する
+type EventType =
+  | "ESTRUS"
+  | "INSEMINATION"
+  | "CALVING"
+  | "VACCINATION"
+  | "SHIPMENT"
+  | "HOOF_TRIMMING"
+  | "OTHER";
+
+export const getEventType = (eventType: EventType): string => {
+  const translations: Record<EventType, string> = {
+    ESTRUS: "発情",
+    INSEMINATION: "受精（人工授精）",
+    CALVING: "分娩",
+    VACCINATION: "ワクチン接種",
+    SHIPMENT: "出荷",
+    HOOF_TRIMMING: "削蹄",
+    OTHER: "その他",
+  };
+
+  return translations[eventType];
+};
