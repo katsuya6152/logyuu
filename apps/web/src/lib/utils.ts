@@ -1,4 +1,4 @@
-import type { EventsGetResType } from "@/types/cattle";
+import type { EventType } from "@/types/cattle";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -57,8 +57,6 @@ export const extractDatePart = (
       throw new Error("Invalid part specified");
   }
 };
-
-type EventType = EventsGetResType["data"][number]["eventType"];
 
 export const getEventType = (eventType: EventType): string => {
   const translations: Record<EventType, string> = {

@@ -5,6 +5,7 @@ import { Bloodline } from "@/components/cattle/detail/Bloodline";
 import { Breeding } from "@/components/cattle/detail/Breeding";
 import { CattleDetailHeader } from "@/components/cattle/detail/Header";
 import { History } from "@/components/cattle/detail/History";
+import { EventDialog } from "@/components/cattle/detail/History/event-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { client } from "@/lib/rpc";
@@ -188,6 +189,7 @@ export default function CattleDetailPage() {
             </TabsContent>
             <TabsContent value="history">
               <History eventData={events?.data} />
+              <EventDialog />
             </TabsContent>
           </Tabs>
 

@@ -25,3 +25,5 @@ export type EventsGetResType = InferResponseType<
   (typeof client.api.cattle)[":cattleId"]["events"]["$get"],
   200
 >;
+
+export type EventType = EventsGetResType["data"][number]["eventType"];

@@ -1,14 +1,12 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { EventsGetResType } from "@/types/cattle";
+import type { EventType, EventsGetResType } from "@/types/cattle";
 import { CalendarIcon, Scissors, Syringe, TruckIcon } from "lucide-react";
 
 export function History({
   eventData,
 }: { eventData: EventsGetResType["data"] | undefined }) {
-  type EventType = EventsGetResType["data"][number]["eventType"];
-
   const eventTypeIcons: Record<EventType, React.ReactNode> = {
     ESTRUS: <CalendarIcon className="text-red-500" />,
     INSEMINATION: <CalendarIcon className="text-blue-500" />,
