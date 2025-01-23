@@ -1,3 +1,4 @@
+import type { EventsGetResType } from "@/types/cattle";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -57,15 +58,7 @@ export const extractDatePart = (
   }
 };
 
-// TODO: BE側と共通化する
-type EventType =
-  | "ESTRUS"
-  | "INSEMINATION"
-  | "CALVING"
-  | "VACCINATION"
-  | "SHIPMENT"
-  | "HOOF_TRIMMING"
-  | "OTHER";
+type EventType = EventsGetResType["data"][number]["eventType"];
 
 export const getEventType = (eventType: EventType): string => {
   const translations: Record<EventType, string> = {
