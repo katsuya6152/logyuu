@@ -33,6 +33,7 @@ import {
   ArrowDownUp,
   ChevronRight,
   Filter,
+  NotebookPen,
   Plus,
   Search,
 } from "lucide-react";

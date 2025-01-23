@@ -5,6 +5,7 @@ import { Bloodline } from "@/components/cattle/detail/Bloodline";
 import { Breeding } from "@/components/cattle/detail/Breeding";
 import { CattleDetailHeader } from "@/components/cattle/detail/Header";
 import { History } from "@/components/cattle/detail/History";
+import { EventDialog } from "@/components/cattle/detail/History/event-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { client } from "@/lib/rpc";
@@ -13,6 +14,7 @@ import useCattleStore from "@/store/cattle-store";
 import type {
   BreedingStatusGetResType,
   BreedingSummaryGetResType,
+  EventsGetResType,
 } from "@/types/cattle";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -28,6 +30,7 @@ export default function CattleDetailPage() {
     useState<BreedingStatusGetResType>();
   const [breedingSummary, setBreedingSummary] =
     useState<BreedingSummaryGetResType>();
+  const [events, setEvents] = useState<EventsGetResType>();
 
   const fetchCattleDetails = async () => {
     try {
@@ -119,14 +122,38 @@ export default function CattleDetailPage() {
     }
   };
 
+  const fetchEvents = async () => {
+    try {
+      const res = await client.api.cattle[":cattleId"].events.$get({
+        param: { cattleId: params.id },
+      });
+
+      if (res.status === 400) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      if (res.status === 200) {
+        const data200 = await res.json();
+        setEvents(data200);
+      }
+    } catch (error) {
+      console.error("Failed to fetch cattle details:", error);
+      alert("データの取得に失敗しました。");
+    }
+  };
+
   // biome-ignore lint/correctness/useExhaustiveDependencies(fetchCattleDetails): <explanation>
   // biome-ignore lint/correctness/useExhaustiveDependencies(fetchBreedingStatus): <explanation>
   // biome-ignore lint/correctness/useExhaustiveDependencies(fetchBreedingSummary): <explanation>
+  // biome-ignore lint/correctness/useExhaustiveDependencies(fetchEvents): <explanation>
   useEffect(() => {
     if (params.id) {
       fetchCattleDetails();
       fetchBreedingStatus();
       fetchBreedingSummary();
+      fetchEvents();
     }
   }, [params.id]);
 
@@ -161,7 +188,8 @@ export default function CattleDetailPage() {
               />
             </TabsContent>
             <TabsContent value="history">
-              <History cattleData={cattleData} />
+              <History eventData={events?.data} />
+              <EventDialog />
             </TabsContent>
           </Tabs>
 

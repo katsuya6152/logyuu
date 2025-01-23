@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
 import { hc } from "hono/client";
@@ -7,6 +7,7 @@ import { deleteCookie, setCookie } from "hono/cookie";
 import { cors } from "hono/cors";
 import { sign } from "hono/jwt";
 import {
+  events,
   bloodline,
   breedingStatus,
   breedingSummary,
@@ -392,6 +393,207 @@ const routes = app
       console.error(error);
       return c.json(
         { success: false, message: "Failed to retrieve breeding summary." },
+        500,
+      );
+    }
+  })
+
+  .get("/cattle/:cattleId/events", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    if (!cattleId) {
+      return c.json({ success: false, message: "cattleId is required." }, 400);
+    }
+
+    try {
+      const result = await db
+        .select()
+        .from(events)
+        .where(eq(events.cattleId, Number(cattleId)));
+
+      return c.json({ success: true, data: result }, 200);
+    } catch (error) {
+      console.error(error);
+      return c.json({ success: false, message: "Failed to get events." }, 500);
+    }
+  })
+
+  .get("/cattle/:cattleId/events/:eventId", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId, eventId } = c.req.param();
+
+    if (!cattleId || !eventId) {
+      return c.json(
+        { success: false, message: "cattleId and eventId are required." },
+        400,
+      );
+    }
+
+    try {
+      const result = await db
+        .select()
+        .from(events)
+        .where(
+          and(
+            eq(events.cattleId, Number(cattleId)),
+            eq(events.eventId, Number(eventId)),
+          ),
+        );
+
+      if (result.length === 0) {
+        return c.json({ success: false, message: "Event not found." }, 404);
+      }
+
+      return c.json({ success: true, data: result[0] }, 200);
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to get the event." },
+        500,
+      );
+    }
+  })
+
+  .post("/cattle/:cattleId/events", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId } = c.req.param();
+
+    if (!cattleId) {
+      return c.json({ success: false, message: "cattleId is required." }, 400);
+    }
+
+    try {
+      const body = await c.req.json();
+
+      // 必須項目のチェック
+      if (!body.eventType || !body.eventDatetime) {
+        return c.json(
+          {
+            success: false,
+            message: "Missing required fields: eventType, eventDatetime.",
+          },
+          400,
+        );
+      }
+
+      // cattleId が本当に存在するかなどのチェックを行う場合はここで
+      // const existingCattle = await db.select().from(cattle).where(eq(cattle.cattleId, Number(cattleId)));
+      // if (existingCattle.length === 0) return c.json({ success: false, message: "Cattle does not exist." }, 404);
+
+      const insertResult = await db.insert(events).values({
+        cattleId: Number(cattleId),
+        eventType: body.eventType,
+        eventDatetime: body.eventDatetime,
+        notes: body.notes ?? null,
+      });
+
+      if (!insertResult.success) {
+        return c.json(
+          { success: false, message: "Failed to insert event." },
+          400,
+        );
+      }
+
+      return c.json(
+        { success: true, insertedId: insertResult.lastInsertRowid },
+        201,
+      );
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to create event." },
+        500,
+      );
+    }
+  })
+
+  .put("/cattle/:cattleId/events/:eventId", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId, eventId } = c.req.param();
+
+    if (!cattleId || !eventId) {
+      return c.json(
+        { success: false, message: "cattleId and eventId are required." },
+        400,
+      );
+    }
+
+    try {
+      const body = await c.req.json();
+
+      // 更新時も必須項目があればチェックする
+      // if (!body.eventType || !body.eventDatetime) { ... }
+
+      const updateResult = await db
+        .update(events)
+        .set({
+          eventType: body.eventType ?? null,
+          eventDatetime: body.eventDatetime ?? null,
+          notes: body.notes ?? null,
+        })
+        .where(
+          and(
+            eq(events.cattleId, Number(cattleId)),
+            eq(events.eventId, Number(eventId)),
+          ),
+        )
+        .run();
+
+      if (updateResult.affectedRows === 0) {
+        return c.json(
+          { success: false, message: "Event not found or not updated." },
+          404,
+        );
+      }
+
+      return c.json(
+        { success: true, message: "Event updated successfully." },
+        200,
+      );
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to update event." },
+        500,
+      );
+    }
+  })
+
+  .delete("/cattle/:cattleId/events/:eventId", async (c) => {
+    const db = drizzle(c.env.DB);
+    const { cattleId, eventId } = c.req.param();
+
+    if (!cattleId || !eventId) {
+      return c.json(
+        { success: false, message: "cattleId and eventId are required." },
+        400,
+      );
+    }
+
+    try {
+      const deleteResult = await db
+        .delete(events)
+        .where(
+          and(
+            eq(events.cattleId, Number(cattleId)),
+            eq(events.eventId, Number(eventId)),
+          ),
+        )
+        .run();
+
+      if (deleteResult.affectedRows === 0) {
+        return c.json({ success: false, message: "Event not found." }, 404);
+      }
+
+      return c.json(
+        { success: true, message: "Event deleted successfully." },
+        200,
+      );
+    } catch (error) {
+      console.error(error);
+      return c.json(
+        { success: false, message: "Failed to delete event." },
         500,
       );
     }

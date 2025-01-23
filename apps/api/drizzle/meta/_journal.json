@@ -57,6 +57,13 @@
       "when": 1737287321766,
       "tag": "0007_eager_cassandra_nova",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1737554268046,
+      "tag": "0008_square_malice",
+      "breakpoints": true
     }
   ]
 }
