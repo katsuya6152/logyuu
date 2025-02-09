@@ -34,7 +34,7 @@ export function EventDialog() {
   const postEvent = async () => {
     const res = await client.api.cattle.events.$post({
       json: {
-        cattleId: cattleId,
+        cattleId: Number(cattleId),
         eventType: eventType,
         eventDatetime: eventDateTime,
         notes: notes,
