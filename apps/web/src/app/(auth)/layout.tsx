@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Image
-          src="/logyuu.png"
+          src="/gyulist2.png"
           width={120}
           height={120}
           alt="logo"

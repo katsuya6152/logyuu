@@ -51,13 +51,8 @@ export const cattle = sqliteTable("cattle", {
   // 備考
   notes: text("notes"),
   // 登録日時
-  createdAt: integer("createdAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-  // 更新日時
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
+  createdAt: text().default(sql`(datetime('now', 'utc'))`),
+  updatedAt: text().default(sql`(datetime('now', 'utc'))`),
 });
 
 /**
@@ -135,12 +130,8 @@ export const breedingStatus = sqliteTable("breeding_status", {
   isDifficultBirth: integer("isDifficultBirth", { mode: "boolean" }),
 
   // 登録日時・更新日時
-  createdAt: integer("createdAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
+  createdAt: text().default(sql`(datetime('now', 'utc'))`),
+  updatedAt: text().default(sql`(datetime('now', 'utc'))`),
 });
 
 /**
@@ -172,12 +163,8 @@ export const breedingSummary = sqliteTable("breeding_summary", {
   pregnancySuccessRate: integer("pregnancySuccessRate", { mode: "number" }),
 
   // 登録日時・更新日時
-  createdAt: integer("createdAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
+  createdAt: text().default(sql`(datetime('now', 'utc'))`),
+  updatedAt: text().default(sql`(datetime('now', 'utc'))`),
 });
 
 /**
@@ -202,14 +189,10 @@ export const events = sqliteTable("events", {
     ],
   }).notNull(),
   // イベントが起こった日時
-  eventDatetime: integer("eventDatetime", { mode: "timestamp_ms" }).notNull(),
+  eventDatetime: text("eventDatetime").notNull(),
   // イベントに関する自由メモ
   notes: text("notes"),
   // 登録日時・更新日時
-  createdAt: integer("createdAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
-  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
-    .notNull()
-    .default(sql`(unixepoch() * 1000)`),
+  createdAt: text().default(sql`(datetime('now', 'utc'))`),
+  updatedAt: text().default(sql`(datetime('now', 'utc'))`),
 });

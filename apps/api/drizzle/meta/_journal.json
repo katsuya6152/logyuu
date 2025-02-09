@@ -64,6 +64,13 @@
       "when": 1737554268046,
       "tag": "0008_square_malice",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1739084168647,
+      "tag": "0009_hot_hitman",
+      "breakpoints": true
     }
   ]
 }

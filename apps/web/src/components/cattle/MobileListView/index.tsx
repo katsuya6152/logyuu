@@ -33,13 +33,12 @@ import {
   ArrowDownUp,
   ChevronRight,
   Filter,
-  NotebookPen,
-  Plus,
   Search,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { AddButton } from "./add-button";
 
 interface MobileListViewProps {
   data?: CattleGetResType;
@@ -92,10 +91,6 @@ export default function MobileListView(props: MobileListViewProps) {
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     console.log("submit:", data);
-  };
-
-  const handleAdd = () => {
-    router.push("/cattle/new");
   };
 
   return (
@@ -297,14 +292,7 @@ export default function MobileListView(props: MobileListViewProps) {
         ))}
       </div>
 
-      <Button
-        className="absolute right-4 bottom-4"
-        variant="secondary"
-        size="icon"
-        onClick={handleAdd}
-      >
-        <Plus />
-      </Button>
+      <AddButton />
     </div>
   );
 }

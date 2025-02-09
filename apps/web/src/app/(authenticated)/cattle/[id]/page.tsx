@@ -5,11 +5,9 @@ import { Bloodline } from "@/components/cattle/detail/Bloodline";
 import { Breeding } from "@/components/cattle/detail/Breeding";
 import { CattleDetailHeader } from "@/components/cattle/detail/Header";
 import { History } from "@/components/cattle/detail/History";
-import { EventDialog } from "@/components/cattle/detail/History/event-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { client } from "@/lib/rpc";
-import { extractDatePart } from "@/lib/utils";
 import useCattleStore from "@/store/cattle-store";
 import type {
   BreedingStatusGetResType,
@@ -189,19 +187,18 @@ export default function CattleDetailPage() {
             </TabsContent>
             <TabsContent value="history">
               <History eventData={events?.data} />
-              <EventDialog />
             </TabsContent>
           </Tabs>
 
           <div className="flex justify-center gap-2 text-xs text-gray-500">
             <p>
               登録日時:
-              {extractDatePart(cattleData.cattle.createdAt, "localString")}
+              {cattleData.cattle.createdAt}
             </p>
             /
             <p>
               更新日時:
-              {extractDatePart(cattleData.cattle.updatedAt, "localString")}
+              {cattleData.cattle.updatedAt}
             </p>
           </div>
         </div>

@@ -1,6 +1,8 @@
+import { zValidator } from "@hono/zod-validator";
 import bcrypt from "bcryptjs";
 import { and, eq } from "drizzle-orm";
 import { type AnyD1Database, drizzle } from "drizzle-orm/d1";
+import { createInsertSchema } from "drizzle-zod";
 import { Hono } from "hono";
 import { hc } from "hono/client";
 import { deleteCookie, setCookie } from "hono/cookie";
@@ -15,6 +17,13 @@ import {
   motherInfo,
   users,
 } from "../db/schema";
+
+const baseEventsInsertSchema = createInsertSchema(events).pick({
+  cattleId: true,
+  eventType: true,
+  eventDatetime: true,
+  notes: true,
+});
 
 type Bindings = {
   DB: AnyD1Database;
@@ -455,58 +464,63 @@ const routes = app
     }
   })
 
-  .post("/cattle/:cattleId/events", async (c) => {
-    const db = drizzle(c.env.DB);
-    const { cattleId } = c.req.param();
+  .post(
+    "/cattle/events",
+    zValidator("json", baseEventsInsertSchema),
+    async (c) => {
+      const db = drizzle(c.env.DB);
+      const { cattleId, eventType, eventDatetime, notes } = await c.req.json();
 
-    if (!cattleId) {
-      return c.json({ success: false, message: "cattleId is required." }, 400);
-    }
-
-    try {
-      const body = await c.req.json();
-
-      // 必須項目のチェック
-      if (!body.eventType || !body.eventDatetime) {
+      if (!cattleId) {
         return c.json(
-          {
-            success: false,
-            message: "Missing required fields: eventType, eventDatetime.",
-          },
+          { success: false, message: "cattleId is required." },
           400,
         );
       }
 
-      // cattleId が本当に存在するかなどのチェックを行う場合はここで
-      // const existingCattle = await db.select().from(cattle).where(eq(cattle.cattleId, Number(cattleId)));
-      // if (existingCattle.length === 0) return c.json({ success: false, message: "Cattle does not exist." }, 404);
+      try {
+        // 必須項目のチェック
+        if (!eventType || !eventDatetime) {
+          return c.json(
+            {
+              success: false,
+              message: "Missing required fields: eventType, eventDatetime.",
+            },
+            400,
+          );
+        }
 
-      const insertResult = await db.insert(events).values({
-        cattleId: Number(cattleId),
-        eventType: body.eventType,
-        eventDatetime: body.eventDatetime,
-        notes: body.notes ?? null,
-      });
+        // cattleId が本当に存在するかなどのチェックを行う場合はここで
+        // const existingCattle = await db.select().from(cattle).where(eq(cattle.cattleId, Number(cattleId)));
+        // if (existingCattle.length === 0) return c.json({ success: false, message: "Cattle does not exist." }, 404);
 
-      if (!insertResult.success) {
+        const insertResult = await db.insert(events).values({
+          cattleId: Number(cattleId),
+          eventType: eventType,
+          eventDatetime: eventDatetime,
+          notes: notes ?? null,
+        });
+
+        if (!insertResult.success) {
+          return c.json(
+            { success: false, message: "Failed to insert event." },
+            400,
+          );
+        }
+
         return c.json(
-          { success: false, message: "Failed to insert event." },
-          400,
+          { success: true, insertedId: insertResult.lastInsertRowid },
+          201,
+        );
+      } catch (error) {
+        console.error(error);
+        return c.json(
+          { success: false, message: "Failed to create event." },
+          500,
         );
       }
-
-      return c.json(
-        { success: true, insertedId: insertResult.lastInsertRowid },
-        201,
-      );
-    } catch (error) {
-      console.error(error);
-      return c.json(
-        { success: false, message: "Failed to create event." },
-        500,
-      );
-    }
-  })
+    },
+  )
 
   .put("/cattle/:cattleId/events/:eventId", async (c) => {
     const db = drizzle(c.env.DB);
