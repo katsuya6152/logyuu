@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6bc8d0e2-77bc-4608-8a78-32068b2f9a2a",
-  "prevId": "576cbf08-a0a5-47d0-aa99-adad9c6f1bc0",
+  "id": "8f801f0f-56fa-404a-9b66-4927e1afe563",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
       "name": "users",
@@ -38,19 +38,19 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {
@@ -216,19 +216,19 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         }
       },
       "indexes": {},
@@ -315,19 +315,19 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         }
       },
       "indexes": {},
@@ -477,19 +477,19 @@
         },
         "createdAt": {
           "name": "createdAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         },
         "updatedAt": {
           "name": "updatedAt",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
-          "default": "(unixepoch() * 1000)"
+          "default": "(datetime('now', 'utc'))"
         }
       },
       "indexes": {},
@@ -500,6 +500,77 @@
           "tableTo": "users",
           "columnsFrom": ["ownerUserId"],
           "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "events": {
+      "name": "events",
+      "columns": {
+        "eventId": {
+          "name": "eventId",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "cattleId": {
+          "name": "cattleId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "eventType": {
+          "name": "eventType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "eventDatetime": {
+          "name": "eventDatetime",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(datetime('now', 'utc'))"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(datetime('now', 'utc'))"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "events_cattleId_cattle_cattleId_fk": {
+          "name": "events_cattleId_cattle_cattleId_fk",
+          "tableFrom": "events",
+          "tableTo": "cattle",
+          "columnsFrom": ["cattleId"],
+          "columnsTo": ["cattleId"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

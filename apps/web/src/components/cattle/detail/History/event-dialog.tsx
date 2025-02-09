@@ -17,32 +17,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { EventType, EventsGetResType } from "@/types/cattle";
+import { useToast } from "@/hooks/use-toast";
+import { client } from "@/lib/rpc";
+import type { EventType } from "@/types/cattle";
 import { NotebookPen } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
-interface EventDialogProps {
-  cattleId: string;
-  onSubmit: (event: EventsGetResType["data"][number]) => void;
-}
-
-export function EventDialog() {
+export function EventDialog({ fetch }: { fetch: () => void }) {
+  const params = useParams<{ id: string }>();
+  const { toast } = useToast();
   const [eventType, setEventType] = useState<EventType>("VACCINATION");
   const [eventDateTime, setEventDateTime] = useState("");
   const [notes, setNotes] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  const postEvent = async () => {
+    const res = await client.api.cattle[":cattleId"].events.$post({
+      param: {
+        cattleId: params.id,
+      },
+      json: {
+        eventType: eventType,
+        eventDatetime: eventDateTime,
+        notes: notes,
+      },
+    });
+
+    if (res.ok) {
+      fetch();
+      toast({
+        title: "登録完了",
+        description: "牛の個体情報が正常に登録されました。",
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // onSubmit({
-    //   cattleId: Number(cattleId),
-    //   eventType,
-    //   eventDatetime,
-    //   notes,
-    // });
+    postEvent();
     console.log("handleSubmit");
     setIsOpen(false);
-    setEventType("VACCINATION");
+    setEventType("ESTRUS");
     setEventDateTime("");
     setNotes("");
   };
@@ -80,12 +96,13 @@ export function EventDialog() {
                   <SelectValue placeholder="イベント種別を選択" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="estrus">発情</SelectItem>
-                  <SelectItem value="insemination">受精</SelectItem>
-                  <SelectItem value="calving">分娩</SelectItem>
-                  <SelectItem value="vaccination">ワクチン</SelectItem>
-                  <SelectItem value="shipment">出荷</SelectItem>
-                  <SelectItem value="hoof_trimming">削蹄</SelectItem>
+                  <SelectItem value="ESTRUS">発情</SelectItem>
+                  <SelectItem value="INSEMINATION">受精</SelectItem>
+                  <SelectItem value="CALVING">分娩</SelectItem>
+                  <SelectItem value="VACCINATION">ワクチン</SelectItem>
+                  <SelectItem value="SHIPMENT">出荷</SelectItem>
+                  <SelectItem value="HOOF_TRIMMING">削蹄</SelectItem>
+                  <SelectItem value="OTHER">その他</SelectItem>
                 </SelectContent>
               </Select>
             </div>
