@@ -19,6 +19,7 @@ import {
 } from "../db/schema";
 
 const baseEventsInsertSchema = createInsertSchema(events).pick({
+  cattleId: true,
   eventType: true,
   eventDatetime: true,
   notes: true,
@@ -464,12 +465,11 @@ const routes = app
   })
 
   .post(
-    "/cattle/:cattleId/events",
+    "/cattle/events",
     zValidator("json", baseEventsInsertSchema),
     async (c) => {
       const db = drizzle(c.env.DB);
-      const { eventType, eventDatetime, notes } = await c.req.json();
-      const { cattleId } = c.req.param();
+      const { cattleId, eventType, eventDatetime, notes } = await c.req.json();
 
       if (!cattleId) {
         return c.json(
