@@ -40,6 +40,7 @@ export const LoginForm = ({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -68,6 +69,20 @@ export const LoginForm = ({
       console.error("ログイン処理中にエラーが発生しました。", error);
       setErrorMessage("通信エラーが発生しました。もう一度お試しください。");
     }
+  };
+
+  const handleDemoLogin = () => {
+    const demoCredentials = {
+      email: "demo@example.com",
+      password: "password123",
+    };
+
+    localStorage.setItem("isDemo", "true");
+
+    setValue("email", demoCredentials.email);
+    setValue("password", demoCredentials.password);
+
+    onSubmit(demoCredentials);
   };
 
   return (
@@ -134,7 +149,14 @@ export const LoginForm = ({
                 こちら
               </a>
             </div>
-            {/* TODO: デモ用のログインボタン追加 */}
+            <p className="text-center text-sm font-bold mt-2">もしくは↓</p>
+            <Button
+              type="button"
+              onClick={handleDemoLogin}
+              className="w-full bg-green-500 font-bold mt-2"
+            >
+              体験用アカウントでログイン
+            </Button>
           </form>
         </CardContent>
       </Card>

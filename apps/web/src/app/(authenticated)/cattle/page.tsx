@@ -40,11 +40,7 @@ export default function CattleListPage() {
   return (
     <div className="flex h-full w-full items-center justify-center pt-20">
       <div className="w-full max-w-sm">
-        {isMobile ? (
-          <MobileListView data={data} />
-        ) : (
-          <DesktopListView data={data} />
-        )}
+        <MobileListView data={data} />
       </div>
     </div>
   );

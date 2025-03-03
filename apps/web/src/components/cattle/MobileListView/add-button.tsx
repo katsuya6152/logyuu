@@ -9,7 +9,7 @@ export const AddButton = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="absolute right-4 bottom-4 flex flex-col gap-2 items-end">
+    <div className="absolute right-4 bottom-20 flex flex-col gap-2 items-end">
       {isOpen ? (
         <div className="flex flex-col gap-2 items-end">
           <Button

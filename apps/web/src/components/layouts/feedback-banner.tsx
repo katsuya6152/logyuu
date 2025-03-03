@@ -19,6 +19,7 @@ export default function FeedbackBanner() {
           alt="banner"
           width={1560}
           height={280}
+          priority
         />
       </Link>
     </div>
