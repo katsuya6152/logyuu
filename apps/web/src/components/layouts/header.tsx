@@ -23,7 +23,6 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -59,15 +58,13 @@ export function Header() {
               </Button>
             )}
 
-            <Link href="/">
-              <Image
-                src="/gyulist2.png"
-                width={120}
-                height={120}
-                alt="logo"
-                priority
-              />
-            </Link>
+            <Image
+              src="/gyulist2.png"
+              width={120}
+              height={120}
+              alt="logo"
+              priority
+            />
           </div>
 
           {/* デスクトップナビゲーション */}

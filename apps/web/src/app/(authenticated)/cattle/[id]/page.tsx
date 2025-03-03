@@ -57,6 +57,17 @@ export default function CattleDetailPage() {
   };
 
   const handleDelete = async () => {
+    // デモアカウントの場合はトースト
+    const isDemo = localStorage.getItem("isDemo");
+    if (isDemo === "true") {
+      toast({
+        title: "削除完了",
+        description: "※デモアカウントのため実際には削除されていません。",
+      });
+      router.push("/cattle");
+      return;
+    }
+
     const res = await client.api.cattle.$delete({
       json: { cattleId: params.id },
     });

@@ -72,6 +72,19 @@ export default function MobileEditCattle() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+
+    // デモアカウントの場合はトースト
+    const isDemo = localStorage.getItem("isDemo");
+    if (isDemo === "true") {
+      setIsSubmitting(false);
+      toast({
+        title: "保存完了",
+        description: "※デモアカウントのため実際には保存されていません。",
+      });
+      router.push("/cattle");
+      return;
+    }
+
     try {
       const token = localStorage.getItem("jwt");
 

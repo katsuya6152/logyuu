@@ -51,6 +51,18 @@ export function EventDialog() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // デモアカウントの場合はトースト
+    const isDemo = localStorage.getItem("isDemo");
+    if (isDemo === "true") {
+      setIsOpen(false);
+      toast({
+        title: "登録完了",
+        description: "※デモアカウントのため実際には登録されていません。",
+      });
+      return;
+    }
+
     postEvent();
     setIsOpen(false);
     setCattleId("");

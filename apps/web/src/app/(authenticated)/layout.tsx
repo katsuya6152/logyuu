@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
+import FeedbackBanner from "@/components/layouts/feedback-banner";
 import { Header } from "@/components/layouts/header";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Toaster />
+        <FeedbackBanner />
       </body>
     </html>
   );
