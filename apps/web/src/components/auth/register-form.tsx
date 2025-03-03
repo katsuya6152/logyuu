@@ -146,6 +146,7 @@ export const RegisterForm = ({
                 こちら
               </a>
             </div>
+            {/* デモ用のログインボタン追加 */}
           </form>
         </CardContent>
       </Card>

@@ -51,6 +51,7 @@ export function EventDialog() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // TODO: デモアカウントの場合はトースト表示
     postEvent();
     setIsOpen(false);
     setCattleId("");

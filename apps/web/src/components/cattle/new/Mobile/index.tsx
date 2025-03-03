@@ -70,6 +70,7 @@ export default function MobileNewCattle() {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+    // TODO: デモアカウントの場合はトースト
     try {
       const token = localStorage.getItem("jwt");
 

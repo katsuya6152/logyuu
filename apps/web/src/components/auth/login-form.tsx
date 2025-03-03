@@ -134,6 +134,7 @@ export const LoginForm = ({
                 こちら
               </a>
             </div>
+            {/* TODO: デモ用のログインボタン追加 */}
           </form>
         </CardContent>
       </Card>
